@@ -33,6 +33,8 @@ const TEMP_YOUTUBE_VIDEO_ID = "Ezw9hqb0eNI";
 export default function RevisionTypeGrid() {
   const { selectedTypeId, setSelectedTypeId } = useLeadStore();
   const [showAll, setShowAll] = useState(true);
+  const [showSelfiesBefore, setShowSelfiesBefore] = useState(false);
+  const [showSelfiesAfter, setShowSelfiesAfter] = useState(false);
   const [showBeforeAfter, setShowBeforeAfter] = useState(false);
   const [showQuestions, setShowQuestions] = useState(false);
   const [selectedQuestion, setSelectedQuestion] = useState<number | null>(null);
@@ -51,20 +53,42 @@ export default function RevisionTypeGrid() {
   // 다시 전체 보기
   const handleShowAll = () => {
     setShowAll(true);
-    setShowBeforeAfter(false); // 전후사진도 초기화
+    setShowSelfiesBefore(false);
+    setShowSelfiesAfter(false);
+    setShowBeforeAfter(false);
     setShowQuestions(false);
     setSelectedQuestion(null);
   };
   
-  // 전후사진 보기
+  // 전후사진 보기 (먼저 셀카부터 시작)
   const handleShowBeforeAfter = () => {
-    setShowBeforeAfter(true);
+    setShowSelfiesBefore(true);
   };
 
   // 질문 버튼 클릭
   const handleQuestionClick = (questionId: number) => {
     setSelectedQuestion(questionId);
   };
+
+  // 수술 전 셀카 표시 후 0.5초 뒤에 수술 후 셀카 표시
+  useEffect(() => {
+    if (showSelfiesBefore) {
+      const timer = setTimeout(() => {
+        setShowSelfiesAfter(true);
+      }, 500);
+      return () => clearTimeout(timer);
+    }
+  }, [showSelfiesBefore]);
+
+  // 수술 후 셀카 표시 후 1초 뒤에 전후사진 표시
+  useEffect(() => {
+    if (showSelfiesAfter) {
+      const timer = setTimeout(() => {
+        setShowBeforeAfter(true);
+      }, 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [showSelfiesAfter]);
 
   // 전후사진 표시 후 0.5초 뒤에 질문 표시
   useEffect(() => {
@@ -227,7 +251,7 @@ export default function RevisionTypeGrid() {
               </div>
 
               {/* 전후사진 보기 버튼 (beforeAfter 있는 경우만) */}
-              {selectedType.beforeAfter && !showBeforeAfter && (
+              {selectedType.beforeAfter && !showSelfiesBefore && (
                 <motion.div
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -243,6 +267,146 @@ export default function RevisionTypeGrid() {
                     </svg>
                     전후사진을 보시겠어요?
                   </button>
+                </motion.div>
+              )}
+
+              {/* 수술 전 셀카 메시지 및 이미지 (왼쪽 - 셀카 당사자) */}
+              {showSelfiesBefore && selectedType.selfieBefore && (
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5 }}
+                  className="mt-6"
+                >
+                  {/* 셀카 당사자 메시지 */}
+                  <div className="flex items-start gap-3 mb-4">
+                    {/* 셀카 당사자 프로필 */}
+                    <motion.div
+                      initial={{ opacity: 0, scale: 0 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ delay: 0.1 }}
+                      className="flex-shrink-0"
+                    >
+                      <div className="w-12 h-12 rounded-full overflow-hidden bg-gradient-to-br from-pink-400 to-purple-500 flex items-center justify-center text-white font-bold shadow-md border-2 border-white relative">
+                        {selectedType.profileImage ? (
+                          <Image
+                            src={selectedType.profileImage}
+                            alt="셀카 당사자"
+                            fill
+                            className="object-cover"
+                            unoptimized
+                          />
+                        ) : (
+                          <span>💁</span>
+                        )}
+                      </div>
+                    </motion.div>
+
+                    <motion.div
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: 0.2 }}
+                      className="max-w-[70%]"
+                    >
+                      <div className="bg-white rounded-2xl rounded-tl-sm px-4 py-3 shadow-md border border-gray-200">
+                        <p className="text-sm">내 셀카를 보여줄게~ 이게 수술전 모습이야</p>
+                      </div>
+                      <p className="text-xs text-gray-400 mt-1">방금 전</p>
+                    </motion.div>
+                  </div>
+
+                  {/* 수술 전 셀카 이미지 */}
+                  <div className="flex items-start gap-3">
+                    <div className="flex-shrink-0 w-12 h-12 opacity-0"></div>
+                    <motion.div
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: 0.4 }}
+                      className="max-w-[70%]"
+                    >
+                      <div className="bg-white rounded-2xl p-2 shadow-md border border-gray-200">
+                        <div className="relative w-full">
+                          <img
+                            src={selectedType.selfieBefore}
+                            alt="수술 전 셀카"
+                            className="w-full h-auto rounded-lg"
+                            style={{ maxWidth: '100%', height: 'auto' }}
+                          />
+                        </div>
+                      </div>
+                      <p className="text-xs text-gray-400 mt-1">방금 전</p>
+                    </motion.div>
+                  </div>
+                </motion.div>
+              )}
+
+              {/* 수술 후 셀카 메시지 및 이미지 (왼쪽 - 셀카 당사자) */}
+              {showSelfiesAfter && selectedType.selfieAfter && (
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5 }}
+                  className="mt-6"
+                >
+                  {/* 셀카 당사자 메시지 */}
+                  <div className="flex items-start gap-3 mb-4">
+                    {/* 셀카 당사자 프로필 */}
+                    <motion.div
+                      initial={{ opacity: 0, scale: 0 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ delay: 0.1 }}
+                      className="flex-shrink-0"
+                    >
+                      <div className="w-12 h-12 rounded-full overflow-hidden bg-gradient-to-br from-pink-400 to-purple-500 flex items-center justify-center text-white font-bold shadow-md border-2 border-white relative">
+                        {selectedType.profileImage ? (
+                          <Image
+                            src={selectedType.profileImage}
+                            alt="셀카 당사자"
+                            fill
+                            className="object-cover"
+                            unoptimized
+                          />
+                        ) : (
+                          <span>💁</span>
+                        )}
+                      </div>
+                    </motion.div>
+
+                    <motion.div
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: 0.2 }}
+                      className="max-w-[70%]"
+                    >
+                      <div className="bg-white rounded-2xl rounded-tl-sm px-4 py-3 shadow-md border border-gray-200">
+                        <p className="text-sm">그리고 이게 수술 후 2주차 사진이야</p>
+                      </div>
+                      <p className="text-xs text-gray-400 mt-1">방금 전</p>
+                    </motion.div>
+                  </div>
+
+                  {/* 수술 후 셀카 이미지 1장 */}
+                  <div className="flex items-start gap-3">
+                    <div className="flex-shrink-0 w-12 h-12 opacity-0"></div>
+                    <motion.div
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: 0.4 }}
+                      className="max-w-[70%]"
+                    >
+                      <div className="bg-white rounded-2xl p-2 shadow-md border border-gray-200">
+                        <div className="relative w-full">
+                          <img
+                            src={selectedType.selfieAfter}
+                            alt="수술 후 셀카"
+                            className="w-full h-auto rounded-lg"
+                            style={{ maxWidth: '100%', height: 'auto' }}
+                          />
+                        </div>
+                      </div>
+                      <p className="text-xs text-gray-400 mt-1">방금 전</p>
+                    </motion.div>
+                  </div>
                 </motion.div>
               )}
 
