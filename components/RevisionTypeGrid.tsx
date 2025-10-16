@@ -211,7 +211,7 @@ export default function RevisionTypeGrid() {
                 <motion.div
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.5 }}
+                  transition={{ delay: 0.5, duration: 0.5 }}
                   className="max-w-[70%]"
                 >
                   <div className="bg-white rounded-2xl rounded-tl-sm px-4 py-3 shadow-md border border-gray-200">
@@ -237,7 +237,7 @@ export default function RevisionTypeGrid() {
                 <motion.div
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.8 }} // 0.8초 후 등장
+                  transition={{ delay: 1.0, duration: 0.5 }} // 원인 메시지 후 0.5초 간격
                   className="max-w-[70%]"
                 >
                   <div className="bg-white rounded-2xl rounded-tl-sm px-4 py-3 shadow-md border border-gray-200">
@@ -255,7 +255,7 @@ export default function RevisionTypeGrid() {
                 <motion.div
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 1.3 }}
+                  transition={{ delay: 1.7, duration: 0.4 }}
                   className="mt-6 flex justify-center"
                 >
                   <button
