@@ -1,0 +1,337 @@
+"use client";
+
+import { motion, AnimatePresence } from "framer-motion";
+import Image from "next/image";
+import { revisionTypes } from "@/data/revisionTypes";
+import { useLeadStore } from "@/store/useLeadStore";
+import { useState } from "react";
+
+// 유형별 사용자 메시지
+const userMessages: Record<number, string> = {
+  1: "코끝이 들려보여서 고민이에요 원장님 ㅠ",
+  2: "코끝이 내려가서 화살코가 됐어요 !",
+  3: "보형물이 휘었는데 왜 이런걸까요??ㅠ",
+  4: "보형물이 비치는데 재수술하면 괜찮아질까요?",
+  5: "보형물이 막 움직여요 원장님 도와주세요!",
+  6: "코끝이 찝혀 보여서 수술한 티가 너무 나요 ㅠ",
+  7: "콧구멍이 비대칭인데 이것도 고쳐주시나요?",
+  8: "복코 교정했는데 아직도 뚱뚱해보여요 ㅠ",
+  9: "매부리가 아직 남아 있는데 없앨 수 있을까요?",
+};
+
+export default function RevisionTypeGrid() {
+  const { selectedTypeId, setSelectedTypeId } = useLeadStore();
+  const [showAll, setShowAll] = useState(true);
+  const [showBeforeAfter, setShowBeforeAfter] = useState(false);
+
+  // 선택된 유형만 보여줄지, 전체를 보여줄지 결정
+  const displayedTypes = showAll 
+    ? revisionTypes 
+    : revisionTypes.filter(type => type.id === selectedTypeId);
+
+  // 유형 선택 시 showAll을 false로 변경
+  const handleTypeSelect = (id: number) => {
+    setSelectedTypeId(id);
+    setShowAll(false);
+  };
+
+  // 다시 전체 보기
+  const handleShowAll = () => {
+    setShowAll(true);
+    setShowBeforeAfter(false); // 전후사진도 초기화
+  };
+  
+  // 전후사진 보기
+  const handleShowBeforeAfter = () => {
+    setShowBeforeAfter(true);
+  };
+
+  // 선택된 유형
+  const selectedType = revisionTypes.find(type => type.id === selectedTypeId);
+
+  return (
+    <section className="py-16 px-4 sm:px-6 lg:px-8 bg-white">
+      <div className="max-w-6xl mx-auto">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          className="text-center mb-12"
+        >
+          <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
+            다음 중 어떤 재수술 유형에<br className="sm:hidden" /> 해당되시나요?
+          </h2>
+          <p className="text-gray-600">
+            해당하는 유형을 선택하시면 자세한 정보를 확인하실 수 있습니다
+          </p>
+        </motion.div>
+
+        {/* 채팅창 UI (선택된 유형이 있고 showAll이 false일 때) */}
+        {!showAll && selectedType && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mb-12 max-w-2xl mx-auto"
+          >
+            {/* 다시 보기 버튼 */}
+            <div className="mb-6 flex justify-center">
+              <button
+                onClick={handleShowAll}
+                className="flex items-center gap-2 px-6 py-3 bg-white border-2 border-blue-600 text-blue-600 rounded-lg hover:bg-blue-50 transition-all shadow-md hover:shadow-lg font-semibold"
+              >
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 10h16M4 14h16M4 18h16" />
+                </svg>
+                다른 유형 더보기
+              </button>
+            </div>
+
+            {/* 메신저 스타일 채팅창 */}
+            <div className="bg-gradient-to-b from-blue-50 to-white rounded-2xl p-6 shadow-lg">
+              {/* 사용자 메시지 (오른쪽) */}
+              <div className="flex items-start gap-3 justify-end mb-6">
+                <motion.div
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.2 }}
+                  className="max-w-[70%]"
+                >
+                  <div className="bg-blue-600 text-white rounded-2xl rounded-tr-sm px-4 py-3 shadow-md">
+                    <p className="text-sm">{userMessages[selectedType.id]}</p>
+                  </div>
+                  <p className="text-xs text-gray-400 mt-1 text-right">방금 전</p>
+                </motion.div>
+                
+                {/* 사용자 프로필 (작은 이미지) */}
+                <motion.div
+                  initial={{ opacity: 0, scale: 0 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: 0.1 }}
+                  className="flex-shrink-0"
+                >
+                  <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-blue-600 bg-gray-100 relative">
+                    {selectedType.thumb ? (
+                      <Image
+                        src={selectedType.thumb}
+                        alt="프로필"
+                        fill
+                        className="object-cover"
+                        unoptimized
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center bg-blue-100">
+                        <span className="text-blue-600 font-bold text-xs">
+                          {selectedType.id}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                </motion.div>
+              </div>
+
+              {/* 원장님 답변 1 - 원인 (왼쪽) */}
+              <div className="flex items-start gap-3 mb-4">
+                {/* 원장님 프로필 */}
+                <motion.div
+                  initial={{ opacity: 0, scale: 0 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: 0.4 }}
+                  className="flex-shrink-0"
+                >
+                  <div className="w-12 h-12 rounded-full overflow-hidden bg-gradient-to-br from-green-400 to-blue-500 flex items-center justify-center text-white font-bold shadow-md border-2 border-white relative">
+                    {process.env.NEXT_PUBLIC_SUPABASE_URL ? (
+                      <Image
+                        src={`${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/landing-images/profile.jpg`}
+                        alt="원장님"
+                        fill
+                        className="object-cover"
+                        unoptimized
+                      />
+                    ) : (
+                      <span>원</span>
+                    )}
+                  </div>
+                </motion.div>
+
+                <motion.div
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.5 }}
+                  className="max-w-[70%]"
+                >
+                  <div className="bg-white rounded-2xl rounded-tl-sm px-4 py-3 shadow-md border border-gray-200">
+                    <p className="text-sm font-semibold text-gray-900 mb-2">
+                      {selectedType.title}
+                    </p>
+                    <p className="text-sm text-gray-700">
+                      <span className="font-semibold text-blue-600">원인:</span>{" "}
+                      {selectedType.cause}
+                    </p>
+                  </div>
+                  <p className="text-xs text-gray-400 mt-1">방금 전</p>
+                </motion.div>
+              </div>
+
+              {/* 원장님 답변 2 - 해결방법 (왼쪽, 1초 후) */}
+              <div className="flex items-start gap-3">
+                {/* 원장님 프로필 (투명, 공간만 차지) */}
+                <div className="flex-shrink-0 w-12 h-12 opacity-0">
+                  <div className="w-12 h-12 rounded-full"></div>
+                </div>
+
+                <motion.div
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 1.5 }} // 1초 후 등장
+                  className="max-w-[70%]"
+                >
+                  <div className="bg-white rounded-2xl rounded-tl-sm px-4 py-3 shadow-md border border-gray-200">
+                    <p className="text-sm text-gray-700">
+                      <span className="font-semibold text-green-600">해결방법:</span>{" "}
+                      {selectedType.method}
+                    </p>
+                  </div>
+                  <p className="text-xs text-gray-400 mt-1">방금 전</p>
+                </motion.div>
+              </div>
+
+              {/* 전후사진 보기 버튼 (beforeAfter 있는 경우만) */}
+              {selectedType.beforeAfter && !showBeforeAfter && (
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 2.0 }}
+                  className="mt-6 flex justify-center"
+                >
+                  <button
+                    onClick={handleShowBeforeAfter}
+                    className="px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-full hover:from-purple-700 hover:to-pink-700 transition-all shadow-lg hover:shadow-xl font-semibold flex items-center gap-2"
+                  >
+                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                    전후사진을 보시겠어요?
+                  </button>
+                </motion.div>
+              )}
+
+              {/* 전후사진 표시 (클릭 후) */}
+              {selectedType.beforeAfter && showBeforeAfter && (
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5 }}
+                  className="mt-6"
+                >
+                  {/* 원장님 프로필 없이 이미지만 */}
+                  <div className="flex items-start gap-3">
+                    <div className="flex-shrink-0 w-12 h-12 opacity-0"></div>
+                    
+                    <div className="flex-1">
+                      <div className="bg-white rounded-2xl p-4 shadow-md border border-gray-200">
+                        <p className="text-sm font-semibold text-gray-900 mb-3">
+                          실제 수술 전후 사진
+                        </p>
+                        <div className="relative w-full">
+                          <img
+                            src={selectedType.beforeAfter}
+                            alt="전후 비교"
+                            className="w-full h-auto rounded-lg"
+                            style={{ maxWidth: '100%', height: 'auto' }}
+                          />
+                        </div>
+                        <p className="text-xs text-gray-500 mt-3 text-center">
+                          ※ 개인차가 있을 수 있으며, 실제 결과는 개인의 상태에 따라 다를 수 있습니다.
+                        </p>
+                      </div>
+                      <p className="text-xs text-gray-400 mt-1">방금 전</p>
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+
+              {/* 하단 안내 */}
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: showBeforeAfter ? 0.5 : 2.0 }}
+                className="mt-6 text-center"
+              >
+                <p className="text-sm text-gray-500">
+                  💬 아래에서 무료 상담을 신청하실 수 있습니다
+                </p>
+              </motion.div>
+            </div>
+          </motion.div>
+        )}
+
+        {/* 그리드 (전체 보기일 때만) */}
+        {showAll && (
+          <AnimatePresence mode="popLayout">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
+            >
+              {displayedTypes.map((type, index) => (
+                <motion.button
+                  key={type.id}
+                  layout
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.8 }}
+                  transition={{ duration: 0.3 }}
+                  whileHover={{ scale: 1.03 }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={() => handleTypeSelect(type.id)}
+                  className={`relative overflow-hidden rounded-2xl border-2 transition-all duration-300 ${
+                    selectedTypeId === type.id
+                      ? "border-blue-600 shadow-xl shadow-blue-100"
+                      : "border-gray-200 hover:border-blue-300 hover:shadow-lg"
+                  }`}
+                >
+                  <div className="aspect-[4/3] relative bg-gray-100">
+                    {type.thumb ? (
+                      <Image
+                        src={type.thumb}
+                        alt={type.title}
+                        fill
+                        className="object-cover"
+                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                        unoptimized
+                      />
+                    ) : (
+                      <div className="absolute inset-0 flex items-center justify-center text-gray-400">
+                        <svg className="w-16 h-16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                        </svg>
+                      </div>
+                    )}
+                  </div>
+                  
+                  <div className="p-4 bg-white">
+                    <h3 className={`text-sm sm:text-base font-semibold text-left transition-colors ${
+                      selectedTypeId === type.id ? "text-blue-600" : "text-gray-900"
+                    }`}>
+                      {type.title}
+                    </h3>
+                  </div>
+
+                  {selectedTypeId === type.id && (
+                    <motion.div
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      className="absolute inset-0 border-4 border-blue-600 rounded-2xl pointer-events-none"
+                    />
+                  )}
+                </motion.button>
+              ))}
+            </motion.div>
+          </AnimatePresence>
+        )}
+      </div>
+    </section>
+  );
+}
