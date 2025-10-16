@@ -1,5 +1,6 @@
 import HeroSection from "@/components/HeroSection";
 import RevisionTypeGrid from "@/components/RevisionTypeGrid";
+import DoctorProfileSection from "@/components/DoctorProfileSection";
 import ReviewCardsSection from "@/components/ReviewCardsSection";
 import LeadForm from "@/components/LeadForm";
 
@@ -11,6 +12,9 @@ export default function Home() {
 
       {/* 유형 선택 그리드 (채팅창 UI + 전후사진 포함) */}
       <RevisionTypeGrid />
+
+      {/* 원장님 프로필 섹션 */}
+      <DoctorProfileSection />
 
       {/* 후기 카드 섹션 */}
       <ReviewCardsSection />
