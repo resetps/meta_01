@@ -227,7 +227,7 @@ export default function RevisionTypeGrid() {
                 </motion.div>
               </div>
 
-              {/* 원장님 답변 2 - 해결방법 (왼쪽, 1초 후) */}
+              {/* 원장님 답변 2 - 해결방법 (왼쪽) */}
               <div className="flex items-start gap-3">
                 {/* 원장님 프로필 (투명, 공간만 차지) */}
                 <div className="flex-shrink-0 w-12 h-12 opacity-0">
@@ -237,7 +237,7 @@ export default function RevisionTypeGrid() {
                 <motion.div
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 1.5 }} // 1초 후 등장
+                  transition={{ delay: 0.8 }} // 0.8초 후 등장
                   className="max-w-[70%]"
                 >
                   <div className="bg-white rounded-2xl rounded-tl-sm px-4 py-3 shadow-md border border-gray-200">
@@ -255,7 +255,7 @@ export default function RevisionTypeGrid() {
                 <motion.div
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 2.0 }}
+                  transition={{ delay: 1.3 }}
                   className="mt-6 flex justify-center"
                 >
                   <button
