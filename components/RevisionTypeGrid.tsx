@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import { revisionTypes } from "@/data/revisionTypes";
 import { useLeadStore } from "@/store/useLeadStore";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 // 유형별 사용자 메시지
 const userMessages: Record<number, string> = {
@@ -19,10 +19,23 @@ const userMessages: Record<number, string> = {
   9: "매부리가 아직 남아 있는데 없앨 수 있을까요?",
 };
 
+// 질문 목록
+const questionButtons = [
+  { id: 1, text: "코 재수술은 언제부터 가능할까요?" },
+  { id: 2, text: "코끝만 재수술 할 수 있나요?" },
+  { id: 3, text: "재수술인데 기증늑 사용해도 괜찮을까요?" },
+  { id: 4, text: "재수술은 회복기간이 더 오래걸리나요?" },
+];
+
+// 임시 유튜브 영상 ID
+const TEMP_YOUTUBE_VIDEO_ID = "Ezw9hqb0eNI";
+
 export default function RevisionTypeGrid() {
   const { selectedTypeId, setSelectedTypeId } = useLeadStore();
   const [showAll, setShowAll] = useState(true);
   const [showBeforeAfter, setShowBeforeAfter] = useState(false);
+  const [showQuestions, setShowQuestions] = useState(false);
+  const [selectedQuestion, setSelectedQuestion] = useState<number | null>(null);
 
   // 선택된 유형만 보여줄지, 전체를 보여줄지 결정
   const displayedTypes = showAll 
@@ -39,12 +52,29 @@ export default function RevisionTypeGrid() {
   const handleShowAll = () => {
     setShowAll(true);
     setShowBeforeAfter(false); // 전후사진도 초기화
+    setShowQuestions(false);
+    setSelectedQuestion(null);
   };
   
   // 전후사진 보기
   const handleShowBeforeAfter = () => {
     setShowBeforeAfter(true);
   };
+
+  // 질문 버튼 클릭
+  const handleQuestionClick = (questionId: number) => {
+    setSelectedQuestion(questionId);
+  };
+
+  // 전후사진 표시 후 0.5초 뒤에 질문 표시
+  useEffect(() => {
+    if (showBeforeAfter) {
+      const timer = setTimeout(() => {
+        setShowQuestions(true);
+      }, 500);
+      return () => clearTimeout(timer);
+    }
+  }, [showBeforeAfter]);
 
   // 선택된 유형
   const selectedType = revisionTypes.find(type => type.id === selectedTypeId);
@@ -251,11 +281,137 @@ export default function RevisionTypeGrid() {
                 </motion.div>
               )}
 
+              {/* 질문 메시지 (오른쪽) - 전후사진 0.5초 후 */}
+              {showBeforeAfter && showQuestions && (
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5 }}
+                  className="mt-6"
+                >
+                  <div className="flex items-start gap-3 justify-end">
+                    <motion.div
+                      initial={{ opacity: 0, x: 20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: 0.2 }}
+                      className="max-w-[70%]"
+                    >
+                      <div className="bg-blue-600 text-white rounded-2xl rounded-tr-sm px-4 py-3 shadow-md">
+                        <p className="text-sm">원장님 궁금한 게 있어요~!</p>
+                      </div>
+                      <p className="text-xs text-gray-400 mt-1 text-right">방금 전</p>
+                    </motion.div>
+                    
+                    {/* 사용자 프로필 */}
+                    <motion.div
+                      initial={{ opacity: 0, scale: 0 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ delay: 0.1 }}
+                      className="flex-shrink-0"
+                    >
+                      <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-blue-600 bg-gray-100 relative">
+                        {selectedType.thumb ? (
+                          <Image
+                            src={selectedType.thumb}
+                            alt="프로필"
+                            fill
+                            className="object-cover"
+                            unoptimized
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center bg-blue-100">
+                            <span className="text-blue-600 font-bold text-xs">
+                              {selectedType.id}
+                            </span>
+                          </div>
+                        )}
+                      </div>
+                    </motion.div>
+                  </div>
+                </motion.div>
+              )}
+
+              {/* 질문 버튼들 (가운데 정렬) */}
+              {showBeforeAfter && showQuestions && !selectedQuestion && (
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.4, duration: 0.5 }}
+                  className="mt-6 space-y-3"
+                >
+                  {questionButtons.map((question, index) => (
+                    <motion.button
+                      key={question.id}
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: 0.5 + index * 0.1 }}
+                      onClick={() => handleQuestionClick(question.id)}
+                      className="w-full bg-white border-2 border-blue-200 text-gray-800 rounded-xl px-4 py-3 hover:border-blue-400 hover:bg-blue-50 transition-all shadow-sm hover:shadow-md text-sm text-left font-medium"
+                    >
+                      {question.text}
+                    </motion.button>
+                  ))}
+                </motion.div>
+              )}
+
+              {/* 유튜브 영상 답변 (원장님 측) */}
+              {showBeforeAfter && selectedQuestion && (
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5 }}
+                  className="mt-6"
+                >
+                  <div className="flex items-start gap-3">
+                    {/* 원장님 프로필 */}
+                    <div className="flex-shrink-0">
+                      <div className="w-12 h-12 rounded-full overflow-hidden bg-gradient-to-br from-green-400 to-blue-500 flex items-center justify-center text-white font-bold shadow-md border-2 border-white relative">
+                        {process.env.NEXT_PUBLIC_SUPABASE_URL ? (
+                          <Image
+                            src={`${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/landing-images/profile.jpg`}
+                            alt="원장님"
+                            fill
+                            className="object-cover"
+                            unoptimized
+                          />
+                        ) : (
+                          <span>원</span>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="flex-1">
+                      <div className="bg-white rounded-2xl p-4 shadow-md border border-gray-200">
+                        <p className="text-sm font-semibold text-gray-900 mb-3">
+                          {questionButtons.find(q => q.id === selectedQuestion)?.text}에 대한 답변
+                        </p>
+                        
+                        {/* 유튜브 쇼츠 임베드 */}
+                        <div className="relative w-full" style={{ paddingBottom: '177.78%' }}>
+                          <iframe
+                            className="absolute top-0 left-0 w-full h-full rounded-lg"
+                            src={`https://www.youtube.com/embed/${TEMP_YOUTUBE_VIDEO_ID}`}
+                            title="YouTube video player"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            allowFullScreen
+                          />
+                        </div>
+                        
+                        <p className="text-xs text-gray-500 mt-3">
+                          💡 자세한 내용은 영상을 참고해주세요
+                        </p>
+                      </div>
+                      <p className="text-xs text-gray-400 mt-1">방금 전</p>
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+
               {/* 하단 안내 */}
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                transition={{ delay: showBeforeAfter ? 0.5 : 2.0 }}
+                transition={{ delay: selectedQuestion ? 0.5 : (showBeforeAfter ? 0.5 : 2.0) }}
                 className="mt-6 text-center"
               >
                 <p className="text-sm text-gray-500">
@@ -273,7 +429,7 @@ export default function RevisionTypeGrid() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
+              className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6"
             >
               {displayedTypes.map((type, index) => (
                 <motion.button
@@ -286,7 +442,7 @@ export default function RevisionTypeGrid() {
                   whileHover={{ scale: 1.03 }}
                   whileTap={{ scale: 0.98 }}
                   onClick={() => handleTypeSelect(type.id)}
-                  className={`relative overflow-hidden rounded-2xl border-2 transition-all duration-300 ${
+                  className={`relative overflow-hidden rounded-xl sm:rounded-2xl border sm:border-2 transition-all duration-300 ${
                     selectedTypeId === type.id
                       ? "border-blue-600 shadow-xl shadow-blue-100"
                       : "border-gray-200 hover:border-blue-300 hover:shadow-lg"
@@ -299,7 +455,7 @@ export default function RevisionTypeGrid() {
                         alt={type.title}
                         fill
                         className="object-cover"
-                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                        sizes="(max-width: 1024px) 50vw, 33vw"
                         unoptimized
                       />
                     ) : (
@@ -311,8 +467,8 @@ export default function RevisionTypeGrid() {
                     )}
                   </div>
                   
-                  <div className="p-4 bg-white">
-                    <h3 className={`text-sm sm:text-base font-semibold text-left transition-colors ${
+                  <div className="p-2 sm:p-4 bg-white">
+                    <h3 className={`text-xs sm:text-base font-semibold text-left transition-colors ${
                       selectedTypeId === type.id ? "text-blue-600" : "text-gray-900"
                     }`}>
                       {type.title}
@@ -323,7 +479,7 @@ export default function RevisionTypeGrid() {
                     <motion.div
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
-                      className="absolute inset-0 border-4 border-blue-600 rounded-2xl pointer-events-none"
+                      className="absolute inset-0 border-2 sm:border-4 border-blue-600 rounded-xl sm:rounded-2xl pointer-events-none"
                     />
                   )}
                 </motion.button>

@@ -7,7 +7,7 @@ const USE_SUPABASE_IMAGES = process.env.NEXT_PUBLIC_SUPABASE_URL !== undefined;
 export const revisionTypes: RevisionType[] = [
   {
     id: 1,
-    title: "코끝이 들리거나 짧아진 경우(구축)",
+    title: "코끝이 들리거나 짧아진 경우",
     cause: "염증 또는 반복된 수술로 인해 흉살 조직과 피막이 유착되면서 코끝이 들리거나 짧아지고, 피부가 단단해지는 현상입니다.",
     method: "보형물을 제거하고 유착된 조직을 풀어준 뒤, 피부를 충분히 늘리고 코끝 연골을 재배치하여 자연스럽게 코끝 위치를 복원합니다.",
     thumb: USE_SUPABASE_IMAGES ? getLandingImageUrl("1.jpg") : "",
