@@ -7,6 +7,7 @@ import * as z from "zod";
 import { useLeadStore } from "@/store/useLeadStore";
 import { submitLead } from "@/app/actions/submit-lead";
 import { useState } from "react";
+import { revisionTypes } from "@/data/revisionTypes";
 
 // Zod 스키마 정의
 const leadFormSchema = z.object({
@@ -43,11 +44,19 @@ export default function LeadForm() {
         return;
       }
 
+      // 선택된 유형의 제목 찾기
+      const selectedType = revisionTypes.find(type => type.id === selectedTypeId);
+      if (!selectedType) {
+        setErrorMessage("유형 정보를 찾을 수 없습니다.");
+        return;
+      }
+
       // Server Action 호출
       const result = await submitLead({
         name: data.name,
         phone: data.phone,
         revisionTypeId: selectedTypeId,
+        revisionTypeTitle: selectedType.title, // 제목 전달
       });
 
       if (!result.success) {
@@ -263,7 +272,7 @@ export default function LeadForm() {
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <a
-                href="https://pf.kakao.com/_your_channel"
+                href="http://pf.kakao.com/_CIxmrn/chat"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-yellow-400 hover:bg-yellow-500 text-gray-900 font-semibold rounded-lg transition-all shadow-lg hover:shadow-xl"
@@ -274,7 +283,7 @@ export default function LeadForm() {
                 카카오톡 상담
               </a>
               <a
-                href="tel:02-1234-5678"
+                href="tel:02-6246-1113"
                 className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-all shadow-lg hover:shadow-xl"
               >
                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">

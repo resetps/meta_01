@@ -7,6 +7,7 @@ export interface SubmitLeadData {
   name: string;
   phone: string;
   revisionTypeId: number;
+  revisionTypeTitle: string; // 재수술 유형 제목 추가
 }
 
 export interface SubmitLeadResult {
@@ -46,6 +47,13 @@ export async function submitLead(data: SubmitLeadData): Promise<SubmitLeadResult
       };
     }
 
+    if (!data.revisionTypeTitle || data.revisionTypeTitle.length < 2) {
+      return {
+        success: false,
+        message: "유형 제목이 올바르지 않습니다.",
+      };
+    }
+
     // 헤더에서 추가 정보 수집
     const headersList = headers();
     const userAgent = headersList.get("user-agent") || undefined;
@@ -59,7 +67,7 @@ export async function submitLead(data: SubmitLeadData): Promise<SubmitLeadResult
       .insert({
         name: data.name,
         phone: data.phone,
-        revision_type_id: data.revisionTypeId,
+        revision_type_id: data.revisionTypeTitle, // 제목을 저장
         user_agent: userAgent,
         ip_address: ipAddress,
         referrer: referrer,
@@ -134,7 +142,7 @@ export async function submitLeadWithUTM(
       .insert({
         name: data.name,
         phone: data.phone,
-        revision_type_id: data.revisionTypeId,
+        revision_type_id: data.revisionTypeTitle, // 제목을 저장
         user_agent: userAgent,
         ip_address: ipAddress,
         referrer: referrer,

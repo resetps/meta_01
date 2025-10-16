@@ -13,8 +13,8 @@ CREATE TABLE IF NOT EXISTS public.leads (
   name VARCHAR(100) NOT NULL,
   phone VARCHAR(20) NOT NULL,
   
-  -- 선택한 재수술 유형 (1-9)
-  revision_type_id INTEGER NOT NULL CHECK (revision_type_id >= 1 AND revision_type_id <= 9),
+  -- 선택한 재수술 유형 제목
+  revision_type_id TEXT NOT NULL,
   
   -- 트래킹 정보 (선택 사항)
   user_agent TEXT,
@@ -128,7 +128,7 @@ COMMENT ON COLUMN public.leads.created_at IS '리드 생성 일시';
 COMMENT ON COLUMN public.leads.updated_at IS '리드 수정 일시';
 COMMENT ON COLUMN public.leads.name IS '고객 이름';
 COMMENT ON COLUMN public.leads.phone IS '연락처 (010-1234-5678 형식)';
-COMMENT ON COLUMN public.leads.revision_type_id IS '선택한 재수술 유형 (1-9)';
+COMMENT ON COLUMN public.leads.revision_type_id IS '선택한 재수술 유형 제목 (예: "코끝이 들리거나 짧아진 경우(구축)")';
 COMMENT ON COLUMN public.leads.user_agent IS '사용자 브라우저 정보';
 COMMENT ON COLUMN public.leads.ip_address IS '접속 IP 주소';
 COMMENT ON COLUMN public.leads.referrer IS '유입 경로 URL';
