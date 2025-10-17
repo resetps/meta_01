@@ -55,8 +55,10 @@ export const revisionTypes: RevisionType[] = [
     cause: "보형물이 코뼈 위에 정확히 고정되지 않으면 만졌을 때 움직임이 느껴질 수 있습니다.",
     method: "보형물의 위치를 재조정하거나, 골막에 안정적으로 고정시켜 재수술을 진행합니다.",
     thumb: USE_SUPABASE_IMAGES ? getLandingImageUrl("5.jpg") : "",
+    beforeAfter: USE_SUPABASE_IMAGES ? getLandingImageUrl("5-b-a.png") : undefined,
     selfieBefore: USE_SUPABASE_IMAGES ? getLandingImageUrl("5-before.jpg") : undefined,
-    selfieAfter: USE_SUPABASE_IMAGES ? getLandingImageUrl("5-after-1.jpg") : undefined
+    selfieAfter: USE_SUPABASE_IMAGES ? getLandingImageUrl("5-after-1.jpg") : undefined,
+    profileImage: USE_SUPABASE_IMAGES ? getLandingImageUrl("5_profile.jpg") : undefined
   },
   {
     id: 6,
@@ -75,8 +77,7 @@ export const revisionTypes: RevisionType[] = [
     cause: "날개연골 재배치가 정확하지 않거나 비중격 지지력이 약할 경우 콧구멍 비대칭이 생길 수 있습니다.",
     method: "비중격과 코끝 연골을 보강하고, 콧날개 연골을 재정렬해 대칭을 맞춥니다.",
     thumb: USE_SUPABASE_IMAGES ? getLandingImageUrl("7.jpg") : "",
-    selfieBefore: USE_SUPABASE_IMAGES ? getLandingImageUrl("7-before.jpg") : undefined,
-    selfieAfter: USE_SUPABASE_IMAGES ? getLandingImageUrl("7-after-1.jpg") : undefined
+    beforeAfter: USE_SUPABASE_IMAGES ? getLandingImageUrl("7-b-a.png") : undefined
   },
   {
     id: 8,
