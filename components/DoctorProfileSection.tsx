@@ -68,9 +68,9 @@ export default function DoctorProfileSection() {
                     
                     {/* 의사 배지 */}
                     <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 bg-blue-600 text-white px-4 py-2 rounded-full shadow-lg">
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-2 whitespace-nowrap">
                         <svg 
-                          className="w-5 h-5" 
+                          className="w-5 h-5 flex-shrink-0" 
                           fill="none" 
                           viewBox="0 0 24 24" 
                           stroke="currentColor"
@@ -137,14 +137,18 @@ export default function DoctorProfileSection() {
                   </div>
 
                   {/* 추가 신뢰 요소 */}
-                  <div className="grid grid-cols-2 gap-3 sm:gap-4 mt-6">
-                    <div className="bg-gradient-to-br from-blue-50 to-white rounded-lg p-3 sm:p-4 text-center">
-                      <p className="text-2xl sm:text-3xl font-bold text-blue-600 mb-1">16년</p>
-                      <p className="text-xs sm:text-sm text-gray-600">임상 경험</p>
+                  <div className="grid grid-cols-3 gap-2 sm:gap-3 mt-6">
+                    <div className="bg-gradient-to-br from-blue-50 to-white rounded-lg p-2 sm:p-3 text-center">
+                      <p className="text-lg sm:text-2xl font-bold text-blue-600 mb-1">5000건</p>
+                      <p className="text-xs sm:text-sm font-semibold text-gray-700 leading-tight">이상<br/>코성형</p>
                     </div>
-                    <div className="bg-gradient-to-br from-blue-50 to-white rounded-lg p-3 sm:p-4 text-center">
-                      <p className="text-2xl sm:text-3xl font-bold text-blue-600 mb-1">1:1</p>
-                      <p className="text-xs sm:text-sm text-gray-600">맞춤 상담</p>
+                    <div className="bg-gradient-to-br from-blue-50 to-white rounded-lg p-2 sm:p-3 text-center">
+                      <p className="text-lg sm:text-2xl font-bold text-blue-600 mb-1">1500건</p>
+                      <p className="text-xs sm:text-sm font-semibold text-gray-700 leading-tight">이상<br/>자가늑</p>
+                    </div>
+                    <div className="bg-gradient-to-br from-blue-50 to-white rounded-lg p-2 sm:p-3 text-center">
+                      <p className="text-lg sm:text-2xl font-bold text-blue-600 mb-1">1:1</p>
+                      <p className="text-xs sm:text-sm font-semibold text-gray-700 leading-tight">맞춤<br/>상담</p>
                     </div>
                   </div>
                 </motion.div>
