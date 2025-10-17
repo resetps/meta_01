@@ -139,12 +139,12 @@ export default function DoctorProfileSection() {
                   {/* 추가 신뢰 요소 */}
                   <div className="grid grid-cols-3 gap-2 sm:gap-3 mt-6">
                     <div className="bg-gradient-to-br from-blue-50 to-white rounded-lg p-2 sm:p-3 text-center">
-                      <p className="text-lg sm:text-2xl font-bold text-blue-600 mb-1">5000건</p>
-                      <p className="text-xs sm:text-sm font-semibold text-gray-700 leading-tight">이상<br/>코성형</p>
+                      <p className="text-lg sm:text-2xl font-bold text-blue-600 mb-1">5,000+</p>
+                      <p className="text-xs sm:text-sm font-semibold text-gray-700 leading-tight">코성형<br/>케이스</p>
                     </div>
                     <div className="bg-gradient-to-br from-blue-50 to-white rounded-lg p-2 sm:p-3 text-center">
-                      <p className="text-lg sm:text-2xl font-bold text-blue-600 mb-1">1500건</p>
-                      <p className="text-xs sm:text-sm font-semibold text-gray-700 leading-tight">이상<br/>자가늑</p>
+                      <p className="text-lg sm:text-2xl font-bold text-blue-600 mb-1">1,500+</p>
+                      <p className="text-xs sm:text-sm font-semibold text-gray-700 leading-tight">자가늑<br/>수술</p>
                     </div>
                     <div className="bg-gradient-to-br from-blue-50 to-white rounded-lg p-2 sm:p-3 text-center">
                       <p className="text-lg sm:text-2xl font-bold text-blue-600 mb-1">1:1</p>
