@@ -9,7 +9,7 @@ import { useState, useEffect } from "react";
 // 유형별 사용자 메시지
 const userMessages: Record<number, string> = {
   1: "코끝이 들려보여서 고민이에요 원장님 ㅠ",
-  2: "코끝이 내려가서 화살코가 됐어요 !",
+  2: "코끝이 떨어져서 단차가 생기고 라인이 이상해졌어요.",
   3: "보형물이 휘었는데 왜 이런걸까요??ㅠ",
   4: "보형물이 비치는데 재수술하면 괜찮아질까요?",
   5: "보형물이 막 움직여요 원장님 도와주세요!",
@@ -17,6 +17,30 @@ const userMessages: Record<number, string> = {
   7: "콧구멍이 비대칭인데 이것도 고쳐주시나요?",
   8: "복코 교정했는데 아직도 뚱뚱해보여요 ㅠ",
   9: "매부리가 아직 남아 있는데 없앨 수 있을까요?",
+};
+
+// 유형별 수술 전 셀카 메시지
+const beforeSelfieMessages: Record<number, string> = {
+  1: "나도 코끝이 들려보여서 재수술했어ㅠ 이게 재수술 하기 전 모습이야.",
+  2: "나도 코끝이 떨어져서 재수술했어ㅠ 이게 재수술 전 셀카야.",
+  3: "나도 보형물이 휘어서 재수술했어ㅠ 이게 재수술 하기 전 사진이야.",
+  4: "나도 보형물이 비쳐서 재수술했어ㅠ 이게 재수술 전이야.",
+  5: "보형물이 움직이는 그 느낌 나도 알아ㅠ 나도 재수술 전엔 그랬어.",
+  6: "나도 코끝이 찝혀보여서 재수술했어ㅠ 이게 재수술 전 사진이야.",
+  8: "콧볼축소했는데도 복코여서 재수술했어ㅠ 재수술 전 사진인데 아직 복코맞지?",
+  9: "매부리가 남아있어서 재수술했어ㅠ 재수술 전사진인데 매부리가 남아있지?",
+};
+
+// 유형별 수술 후 셀카 메시지
+const afterSelfieMessages: Record<number, string> = {
+  1: "이건 재수술한 지 2개월차 사진! 완전 달라졌지?",
+  2: "이건 재수술한 지 3개월차 사진! 완전 달라졌지?",
+  3: "이건 재수술한 지 1개월차 사진! 완전 달라졌지?",
+  4: "이건 재수술한 지 2주차 사진! 완전 달라졌지?",
+  5: "이건 재수술한 지 1개월차 사진! 완전 달라졌지?",
+  6: "이건 재수술한 지 2주차 사진! 완전 달라졌지?",
+  8: "이건 재수술한 지 2주차 사진! 완전 달라졌지?",
+  9: "이건 재수술한 지 2주차 사진! 완전 달라졌지?",
 };
 
 // 질문 목록
@@ -38,6 +62,12 @@ export default function RevisionTypeGrid() {
   const [showBeforeAfter, setShowBeforeAfter] = useState(false);
   const [showQuestions, setShowQuestions] = useState(false);
   const [selectedQuestion, setSelectedQuestion] = useState<number | null>(null);
+  
+  // 타이핑 인디케이터 및 메시지 표시 상태
+  const [showBeforeSelfieTyping, setShowBeforeSelfieTyping] = useState(false);
+  const [showBeforeSelfieMessage, setShowBeforeSelfieMessage] = useState(false);
+  const [showAfterSelfieTyping, setShowAfterSelfieTyping] = useState(false);
+  const [showAfterSelfieMessage, setShowAfterSelfieMessage] = useState(false);
 
   // 선택된 유형만 보여줄지, 전체를 보여줄지 결정
   const displayedTypes = showAll 
@@ -58,6 +88,10 @@ export default function RevisionTypeGrid() {
     setShowBeforeAfter(false);
     setShowQuestions(false);
     setSelectedQuestion(null);
+    setShowBeforeSelfieTyping(false);
+    setShowBeforeSelfieMessage(false);
+    setShowAfterSelfieTyping(false);
+    setShowAfterSelfieMessage(false);
   };
   
   // 전후사진 보기 (먼저 셀카부터 시작)
@@ -70,25 +104,49 @@ export default function RevisionTypeGrid() {
     setSelectedQuestion(questionId);
   };
 
-  // 수술 전 셀카 표시 후 0.5초 뒤에 수술 후 셀카 표시
+  // 수술 전 셀카: 타이핑 인디케이터 표시
   useEffect(() => {
     if (showSelfiesBefore) {
+      setShowBeforeSelfieTyping(true);
       const timer = setTimeout(() => {
-        setShowSelfiesAfter(true);
-      }, 500);
+        setShowBeforeSelfieTyping(false);
+        setShowBeforeSelfieMessage(true);
+      }, 1000);
       return () => clearTimeout(timer);
     }
   }, [showSelfiesBefore]);
 
-  // 수술 후 셀카 표시 후 1초 뒤에 전후사진 표시
+  // 수술 전 셀카 메시지 표시 후 수술 후 셀카로 전환
+  useEffect(() => {
+    if (showBeforeSelfieMessage) {
+      const timer = setTimeout(() => {
+        setShowSelfiesAfter(true);
+      }, 1500);
+      return () => clearTimeout(timer);
+    }
+  }, [showBeforeSelfieMessage]);
+
+  // 수술 후 셀카: 타이핑 인디케이터 표시
   useEffect(() => {
     if (showSelfiesAfter) {
+      setShowAfterSelfieTyping(true);
       const timer = setTimeout(() => {
-        setShowBeforeAfter(true);
+        setShowAfterSelfieTyping(false);
+        setShowAfterSelfieMessage(true);
       }, 1000);
       return () => clearTimeout(timer);
     }
   }, [showSelfiesAfter]);
+
+  // 수술 후 셀카 메시지 표시 후 전후사진 표시
+  useEffect(() => {
+    if (showAfterSelfieMessage) {
+      const timer = setTimeout(() => {
+        setShowBeforeAfter(true);
+      }, 1500);
+      return () => clearTimeout(timer);
+    }
+  }, [showAfterSelfieMessage]);
 
   // 전후사진 표시 후 0.5초 뒤에 질문 표시
   useEffect(() => {
@@ -270,8 +328,58 @@ export default function RevisionTypeGrid() {
                 </motion.div>
               )}
 
-              {/* 수술 전 셀카 메시지 및 이미지 (왼쪽 - 셀카 당사자) */}
-              {showSelfiesBefore && selectedType.selfieBefore && (
+              {/* 수술 전 셀카: 타이핑 인디케이터 */}
+              {showBeforeSelfieTyping && selectedType.selfieBefore && (
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3 }}
+                  className="mt-6"
+                >
+                  <div className="flex items-start gap-3">
+                    {/* 셀카 당사자 프로필 */}
+                    <div className="flex-shrink-0">
+                      <div className="w-12 h-12 rounded-full overflow-hidden bg-gradient-to-br from-pink-400 to-purple-500 flex items-center justify-center text-white font-bold shadow-md border-2 border-white relative">
+                        {selectedType.profileImage ? (
+                          <Image
+                            src={selectedType.profileImage}
+                            alt="셀카 당사자"
+                            fill
+                            className="object-cover"
+                            unoptimized
+                          />
+                        ) : (
+                          <span>💁</span>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* 타이핑 인디케이터 */}
+                    <div className="bg-white rounded-2xl rounded-tl-sm px-5 py-4 shadow-md border border-gray-200">
+                      <div className="flex items-center gap-1">
+                        <motion.div
+                          animate={{ scale: [1, 1.3, 1] }}
+                          transition={{ duration: 0.6, repeat: Infinity, delay: 0 }}
+                          className="w-2 h-2 bg-gray-400 rounded-full"
+                        />
+                        <motion.div
+                          animate={{ scale: [1, 1.3, 1] }}
+                          transition={{ duration: 0.6, repeat: Infinity, delay: 0.2 }}
+                          className="w-2 h-2 bg-gray-400 rounded-full"
+                        />
+                        <motion.div
+                          animate={{ scale: [1, 1.3, 1] }}
+                          transition={{ duration: 0.6, repeat: Infinity, delay: 0.4 }}
+                          className="w-2 h-2 bg-gray-400 rounded-full"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+
+              {/* 수술 전 셀카 메시지 및 이미지 */}
+              {showBeforeSelfieMessage && selectedType.selfieBefore && (
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -309,7 +417,7 @@ export default function RevisionTypeGrid() {
                       className="max-w-[70%]"
                     >
                       <div className="bg-white rounded-2xl rounded-tl-sm px-4 py-3 shadow-md border border-gray-200">
-                        <p className="text-sm">내 셀카를 보여줄게~ 이게 수술전 모습이야</p>
+                        <p className="text-sm">{beforeSelfieMessages[selectedType.id] || "내 셀카를 보여줄게~ 이게 수술전 모습이야"}</p>
                       </div>
                       <p className="text-xs text-gray-400 mt-1">방금 전</p>
                     </motion.div>
@@ -340,8 +448,58 @@ export default function RevisionTypeGrid() {
                 </motion.div>
               )}
 
-              {/* 수술 후 셀카 메시지 및 이미지 (왼쪽 - 셀카 당사자) */}
-              {showSelfiesAfter && selectedType.selfieAfter && (
+              {/* 수술 후 셀카: 타이핑 인디케이터 */}
+              {showAfterSelfieTyping && selectedType.selfieAfter && (
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3 }}
+                  className="mt-6"
+                >
+                  <div className="flex items-start gap-3">
+                    {/* 셀카 당사자 프로필 */}
+                    <div className="flex-shrink-0">
+                      <div className="w-12 h-12 rounded-full overflow-hidden bg-gradient-to-br from-pink-400 to-purple-500 flex items-center justify-center text-white font-bold shadow-md border-2 border-white relative">
+                        {selectedType.profileImage ? (
+                          <Image
+                            src={selectedType.profileImage}
+                            alt="셀카 당사자"
+                            fill
+                            className="object-cover"
+                            unoptimized
+                          />
+                        ) : (
+                          <span>💁</span>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* 타이핑 인디케이터 */}
+                    <div className="bg-white rounded-2xl rounded-tl-sm px-5 py-4 shadow-md border border-gray-200">
+                      <div className="flex items-center gap-1">
+                        <motion.div
+                          animate={{ scale: [1, 1.3, 1] }}
+                          transition={{ duration: 0.6, repeat: Infinity, delay: 0 }}
+                          className="w-2 h-2 bg-gray-400 rounded-full"
+                        />
+                        <motion.div
+                          animate={{ scale: [1, 1.3, 1] }}
+                          transition={{ duration: 0.6, repeat: Infinity, delay: 0.2 }}
+                          className="w-2 h-2 bg-gray-400 rounded-full"
+                        />
+                        <motion.div
+                          animate={{ scale: [1, 1.3, 1] }}
+                          transition={{ duration: 0.6, repeat: Infinity, delay: 0.4 }}
+                          className="w-2 h-2 bg-gray-400 rounded-full"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+
+              {/* 수술 후 셀카 메시지 및 이미지 */}
+              {showAfterSelfieMessage && selectedType.selfieAfter && (
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -379,7 +537,7 @@ export default function RevisionTypeGrid() {
                       className="max-w-[70%]"
                     >
                       <div className="bg-white rounded-2xl rounded-tl-sm px-4 py-3 shadow-md border border-gray-200">
-                        <p className="text-sm">그리고 이게 수술 후 2주차 사진이야</p>
+                        <p className="text-sm">{afterSelfieMessages[selectedType.id] || "그리고 이게 수술 후 2주차 사진이야"}</p>
                       </div>
                       <p className="text-xs text-gray-400 mt-1">방금 전</p>
                     </motion.div>
