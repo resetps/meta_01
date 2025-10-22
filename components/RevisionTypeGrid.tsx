@@ -174,9 +174,17 @@ export default function RevisionTypeGrid() {
           <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
             다음 중 어떤 재수술 유형에<br className="sm:hidden" /> 해당되시나요?
           </h2>
-          <p className="text-gray-600">
-            해당하는 유형을 선택하시면 자세한 정보를 확인하실 수 있습니다
-          </p>
+          <motion.p
+            animate={{ y: [0, -5, 0] }}
+            transition={{
+              duration: 0.8,
+              repeat: Infinity,
+              ease: "easeInOut"
+            }}
+            className="text-xl text-gray-800 font-medium"
+          >
+            해당하는 유형을 선택해주세요!
+          </motion.p>
         </motion.div>
 
         {/* 채팅창 UI (선택된 유형이 있고 showAll이 false일 때) */}
