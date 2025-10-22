@@ -8,6 +8,7 @@ import { useLeadStore } from "@/store/useLeadStore";
 import { submitLead } from "@/app/actions/submit-lead";
 import { useState, useEffect } from "react";
 import { revisionTypes } from "@/data/revisionTypes";
+import { useRouter } from "next/navigation";
 
 // Zod 스키마 정의 (consent 제외 - 플로팅 폼은 간소화)
 const floatingFormSchema = z.object({
@@ -23,17 +24,32 @@ export default function FloatingLeadForm() {
   const { selectedTypeId, setFormSubmitted } = useLeadStore();
   const [errorMessage, setErrorMessage] = useState<string>("");
   const [isVisible, setIsVisible] = useState(true);
-  const [isSubmitted, setIsSubmitted] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
+  const router = useRouter();
 
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
     reset,
+    setValue,
   } = useForm<FormData>({
     resolver: zodResolver(floatingFormSchema),
   });
+
+  // 전화번호 자동 포맷팅 함수
+  const formatPhoneNumber = (value: string) => {
+    const numbers = value.replace(/[^\d]/g, '');
+    
+    if (numbers.length <= 3) {
+      return numbers;
+    } else if (numbers.length <= 7) {
+      return `${numbers.slice(0, 3)}-${numbers.slice(3)}`;
+    } else if (numbers.length <= 11) {
+      return `${numbers.slice(0, 3)}-${numbers.slice(3, 7)}-${numbers.slice(7)}`;
+    }
+    return `${numbers.slice(0, 3)}-${numbers.slice(3, 7)}-${numbers.slice(7, 11)}`;
+  };
 
   // 기존 LeadForm 위치 감지
   useEffect(() => {
@@ -91,16 +107,10 @@ export default function FloatingLeadForm() {
         return;
       }
 
-      // 성공 처리
+      // 성공 처리 - /thankyou 페이지로 리다이렉트
       setFormSubmitted(true);
-      setIsSubmitted(true);
-      setIsExpanded(false); // 폼 닫기
       reset();
-
-      // 3초 후 성공 메시지 숨김
-      setTimeout(() => {
-        setIsSubmitted(false);
-      }, 3000);
+      router.push('/thankyou');
     } catch (error) {
       console.error("제출 실패:", error);
       setErrorMessage("제출 실패. 다시 시도해주세요");
@@ -109,7 +119,7 @@ export default function FloatingLeadForm() {
 
   return (
     <AnimatePresence>
-      {isVisible && !isSubmitted && (
+      {isVisible && (
         <motion.div
           initial={{ y: 100, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
@@ -179,6 +189,10 @@ export default function FloatingLeadForm() {
                       {...register("phone")}
                       type="tel"
                       placeholder="010-1234-5678"
+                      onChange={(e) => {
+                        const formatted = formatPhoneNumber(e.target.value);
+                        setValue("phone", formatted);
+                      }}
                       className={`w-full px-3 py-2.5 sm:py-3 border-2 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-white transition-all ${
                         errors.phone ? "border-red-400 bg-red-50" : "border-white/30 bg-white"
                       }`}
@@ -217,27 +231,6 @@ export default function FloatingLeadForm() {
               </div>
             </div>
           )}
-        </motion.div>
-      )}
-
-      {/* 제출 완료 알림 */}
-      {isSubmitted && (
-        <motion.div
-          initial={{ y: 100, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          exit={{ y: 100, opacity: 0 }}
-          className="fixed bottom-0 left-0 right-0 z-40 bg-gradient-to-r from-green-500 to-emerald-600 shadow-2xl"
-        >
-          <div className="max-w-7xl mx-auto px-4 py-4 text-center">
-            <motion.div
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              transition={{ type: "spring", stiffness: 300, damping: 20 }}
-            >
-              <p className="text-white font-bold text-lg mb-1">✅ 상담 신청 완료!</p>
-              <p className="text-white/90 text-sm">빠른 시일 내에 연락드리겠습니다</p>
-            </motion.div>
-          </div>
         </motion.div>
       )}
     </AnimatePresence>
