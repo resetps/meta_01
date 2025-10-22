@@ -77,7 +77,8 @@ export const revisionTypes: RevisionType[] = [
     cause: "날개연골 재배치가 정확하지 않거나 비중격 지지력이 약할 경우 콧구멍 비대칭이 생길 수 있습니다.",
     method: "비중격과 코끝 연골을 보강하고, 콧날개 연골을 재정렬해 대칭을 맞춥니다.",
     thumb: USE_SUPABASE_IMAGES ? getLandingImageUrl("7.jpg") : "",
-    beforeAfter: USE_SUPABASE_IMAGES ? getLandingImageUrl("7-b-a.png") : undefined
+    beforeAfter: USE_SUPABASE_IMAGES ? getLandingImageUrl("7-b-a.png") : undefined,
+    profileImage: USE_SUPABASE_IMAGES ? getLandingImageUrl("7_profile.jpg") : undefined
   },
   {
     id: 8,

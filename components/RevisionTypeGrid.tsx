@@ -69,6 +69,9 @@ export default function RevisionTypeGrid() {
   const [showAfterSelfieTyping, setShowAfterSelfieTyping] = useState(false);
   const [showAfterSelfieMessage, setShowAfterSelfieMessage] = useState(false);
 
+  // 선택된 유형 (useEffect들보다 먼저 정의)
+  const selectedType = revisionTypes.find(type => type.id === selectedTypeId);
+
   // 선택된 유형만 보여줄지, 전체를 보여줄지 결정
   const displayedTypes = showAll 
     ? revisionTypes 
@@ -94,9 +97,18 @@ export default function RevisionTypeGrid() {
     setShowAfterSelfieMessage(false);
   };
   
-  // 전후사진 보기 (먼저 셀카부터 시작)
+  // 전후사진 보기 (먼저 셀카부터 시작, 셀카 없으면 바로 전후사진)
   const handleShowBeforeAfter = () => {
-    setShowSelfiesBefore(true);
+    // 셀카 이미지가 없으면 바로 전후사진 및 질문 표시
+    if (!selectedType?.selfieBefore || !selectedType?.selfieAfter) {
+      setShowBeforeAfter(true);
+      setTimeout(() => {
+        setShowQuestions(true);
+      }, 500);
+    } else {
+      // 셀카 이미지가 있으면 기존 플로우대로
+      setShowSelfiesBefore(true);
+    }
   };
 
   // 질문 버튼 클릭
@@ -106,7 +118,7 @@ export default function RevisionTypeGrid() {
 
   // 수술 전 셀카: 타이핑 인디케이터 표시
   useEffect(() => {
-    if (showSelfiesBefore) {
+    if (showSelfiesBefore && selectedType?.selfieBefore) {
       setShowBeforeSelfieTyping(true);
       const timer = setTimeout(() => {
         setShowBeforeSelfieTyping(false);
@@ -114,21 +126,21 @@ export default function RevisionTypeGrid() {
       }, 1000);
       return () => clearTimeout(timer);
     }
-  }, [showSelfiesBefore]);
+  }, [showSelfiesBefore, selectedType]);
 
   // 수술 전 셀카 메시지 표시 후 수술 후 셀카로 전환
   useEffect(() => {
-    if (showBeforeSelfieMessage) {
+    if (showBeforeSelfieMessage && selectedType?.selfieAfter) {
       const timer = setTimeout(() => {
         setShowSelfiesAfter(true);
       }, 1500);
       return () => clearTimeout(timer);
     }
-  }, [showBeforeSelfieMessage]);
+  }, [showBeforeSelfieMessage, selectedType]);
 
   // 수술 후 셀카: 타이핑 인디케이터 표시
   useEffect(() => {
-    if (showSelfiesAfter) {
+    if (showSelfiesAfter && selectedType?.selfieAfter) {
       setShowAfterSelfieTyping(true);
       const timer = setTimeout(() => {
         setShowAfterSelfieTyping(false);
@@ -136,7 +148,7 @@ export default function RevisionTypeGrid() {
       }, 1000);
       return () => clearTimeout(timer);
     }
-  }, [showSelfiesAfter]);
+  }, [showSelfiesAfter, selectedType]);
 
   // 수술 후 셀카 메시지 표시 후 전후사진 표시
   useEffect(() => {
@@ -157,9 +169,6 @@ export default function RevisionTypeGrid() {
       return () => clearTimeout(timer);
     }
   }, [showBeforeAfter]);
-
-  // 선택된 유형
-  const selectedType = revisionTypes.find(type => type.id === selectedTypeId);
 
   return (
     <section className="py-16 px-4 sm:px-6 lg:px-8 bg-white">

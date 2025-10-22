@@ -137,11 +137,25 @@ export default function FloatingLeadForm() {
           {!isExpanded ? (
             // 접힌 상태: 버튼만 표시
             <div className="flex justify-center pb-4 sm:pb-6">
+              {/* Pulse + Shadow 효과 */}
               <motion.button
                 onClick={() => setIsExpanded(true)}
-                whileHover={{ scale: 1.05 }}
+                animate={{
+                  scale: [1, 1.05, 1],
+                  boxShadow: [
+                    "0 10px 25px -5px rgba(0, 0, 0, 0.3), 0 8px 10px -6px rgba(0, 0, 0, 0.2)",
+                    "0 20px 50px -10px rgba(0, 0, 0, 0.4), 0 15px 20px -8px rgba(0, 0, 0, 0.25)",
+                    "0 10px 25px -5px rgba(0, 0, 0, 0.3), 0 8px 10px -6px rgba(0, 0, 0, 0.2)",
+                  ],
+                }}
+                transition={{
+                  duration: 2,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                }}
+                whileHover={{ scale: 1.08 }}
                 whileTap={{ scale: 0.95 }}
-                className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-4 rounded-full font-bold text-base sm:text-lg shadow-2xl hover:shadow-3xl transition-all flex items-center gap-3"
+                className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-4 rounded-full font-bold text-base sm:text-lg transition-all flex items-center gap-3"
               >
                 코 재수술 상담 신청하기
                 <svg 
@@ -159,9 +173,9 @@ export default function FloatingLeadForm() {
           ) : (
             // 펼쳐진 상태: 폼 표시
             <div className="bg-gradient-to-r from-blue-600 to-purple-600">
-              <div className="max-w-7xl mx-auto px-4 py-3 sm:py-4">
+              <div className="max-w-7xl mx-auto px-4 py-1 sm:py-2">
                 {/* 닫기 버튼 */}
-                <div className="flex justify-end mb-2">
+                <div className="flex justify-end mb-0">
                   <button
                     onClick={() => setIsExpanded(false)}
                     className="text-white/70 hover:text-white transition-colors"
@@ -173,15 +187,15 @@ export default function FloatingLeadForm() {
                 </div>
 
                 <form onSubmit={handleSubmit(onSubmit)} className="space-y-3">
-                  {/* 첫 번째 행: 입력 필드와 버튼 */}
-                  <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3">
-                    {/* 안내 텍스트 */}
-                    <div className="hidden sm:block text-white flex-shrink-0">
-                      <p className="text-sm font-bold">🎁 무료 상담 신청</p>
-                    </div>
+                  {/* 타이틀 */}
+                  <div className="text-center mb-2">
+                    <p className="text-2xl sm:text-3xl font-bold text-white">코 재수술은 리셋성형외과!</p>
+                  </div>
 
+                  {/* 첫 번째 행: 입력 필드와 버튼 */}
+                  <div className="flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-3">
                     {/* 이름 입력 */}
-                    <div className="flex-1 sm:max-w-[180px]">
+                    <div className="w-full sm:w-auto sm:max-w-[180px]">
                       <input
                         {...register("name")}
                         type="text"
@@ -193,7 +207,7 @@ export default function FloatingLeadForm() {
                     </div>
 
                     {/* 연락처 입력 */}
-                    <div className="flex-1 sm:max-w-[200px]">
+                    <div className="w-full sm:w-auto sm:max-w-[200px]">
                       <input
                         {...register("phone")}
                         type="tel"
@@ -223,7 +237,7 @@ export default function FloatingLeadForm() {
                   </div>
 
                   {/* 두 번째 행: 개인정보 동의 */}
-                  <div className="flex items-start gap-2">
+                  <div className="flex items-start justify-center gap-2">
                     <input
                       {...register("consent")}
                       type="checkbox"
