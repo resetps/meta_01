@@ -47,12 +47,12 @@ const afterSelfieMessages: Record<number, string> = {
 const questionButtons = [
   { id: 1, text: "코 재수술은 언제부터 가능할까요?" },
   { id: 2, text: "코끝만 재수술 할 수 있나요?" },
-  { id: 3, text: "재수술인데 기증늑 사용해도 괜찮을까요?" },
+  { id: 3, text: "꼭 자가늑연골을 써야 하나요?" },
   { id: 4, text: "재수술은 회복기간이 더 오래걸리나요?" },
 ];
 
 // 임시 유튜브 영상 ID
-const TEMP_YOUTUBE_VIDEO_ID = "Ezw9hqb0eNI";
+const TEMP_YOUTUBE_VIDEO_ID = "6qVm5NcxVaA";
 
 export default function RevisionTypeGrid() {
   const { selectedTypeId, setSelectedTypeId } = useLeadStore();
@@ -181,7 +181,7 @@ export default function RevisionTypeGrid() {
               repeat: Infinity,
               ease: "easeInOut"
             }}
-            className="text-xl text-gray-800 font-medium"
+            className="text-xl text-blue-600 font-medium"
           >
             해당하는 유형을 선택해주세요!
           </motion.p>
@@ -326,11 +326,24 @@ export default function RevisionTypeGrid() {
                 >
                   <button
                     onClick={handleShowBeforeAfter}
-                    className="px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-full hover:from-purple-700 hover:to-pink-700 transition-all shadow-lg hover:shadow-xl font-semibold flex items-center gap-2"
+                    className="pl-[26px] pr-6 py-[14px] bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-full hover:from-purple-700 hover:to-pink-700 transition-all shadow-lg hover:shadow-xl font-semibold flex items-center gap-3"
                   >
-                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                    </svg>
+                    {/* 프로필 이미지 - 버튼 전체 높이에 맞춰 왼쪽 끝에 배치 */}
+                    <div className="w-12 h-12 -my-[14px] -ml-[24px] rounded-full overflow-hidden border-2 border-white relative flex-shrink-0 shadow-md">
+                      {selectedType.profileImage ? (
+                        <Image
+                          src={selectedType.profileImage}
+                          alt="프로필"
+                          fill
+                          className="object-cover"
+                          unoptimized
+                        />
+                      ) : (
+                        <div className="w-full h-full bg-white flex items-center justify-center text-purple-600 text-2xl">
+                          💁
+                        </div>
+                      )}
+                    </div>
                     전후사진을 보시겠어요?
                   </button>
                 </motion.div>
@@ -661,81 +674,92 @@ export default function RevisionTypeGrid() {
                 </motion.div>
               )}
 
-              {/* 질문 버튼들 (가운데 정렬) */}
-              {showBeforeAfter && showQuestions && !selectedQuestion && (
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.4, duration: 0.5 }}
-                  className="mt-6 space-y-3"
-                >
-                  {questionButtons.map((question, index) => (
-                    <motion.button
-                      key={question.id}
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: 0.5 + index * 0.1 }}
-                      onClick={() => handleQuestionClick(question.id)}
-                      className="w-full bg-white border-2 border-blue-200 text-gray-800 rounded-xl px-4 py-3 hover:border-blue-400 hover:bg-blue-50 transition-all shadow-sm hover:shadow-md text-sm text-left font-medium"
-                    >
-                      {question.text}
-                    </motion.button>
-                  ))}
-                </motion.div>
-              )}
-
               {/* 유튜브 영상 답변 (원장님 측) */}
-              {showBeforeAfter && selectedQuestion && (
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5 }}
-                  className="mt-6"
-                >
-                  <div className="flex items-start gap-3">
-                    {/* 원장님 프로필 */}
-                    <div className="flex-shrink-0">
-                      <div className="w-12 h-12 rounded-full overflow-hidden bg-gradient-to-br from-green-400 to-blue-500 flex items-center justify-center text-white font-bold shadow-md border-2 border-white relative">
-                        {process.env.NEXT_PUBLIC_SUPABASE_URL ? (
-                          <Image
-                            src={`${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/landing-images/profile.jpg`}
-                            alt="원장님"
-                            fill
-                            className="object-cover"
-                            unoptimized
-                          />
-                        ) : (
-                          <span>원</span>
-                        )}
-                      </div>
-                    </div>
-
-                    <div className="flex-1">
-                      <div className="bg-white rounded-2xl p-4 shadow-md border border-gray-200">
-                        <p className="text-sm font-semibold text-gray-900 mb-3">
-                          {questionButtons.find(q => q.id === selectedQuestion)?.text}에 대한 답변
-                        </p>
-                        
-                        {/* 유튜브 쇼츠 임베드 */}
-                        <div className="relative w-full" style={{ paddingBottom: '177.78%' }}>
-                          <iframe
-                            className="absolute top-0 left-0 w-full h-full rounded-lg"
-                            src={`https://www.youtube.com/embed/${TEMP_YOUTUBE_VIDEO_ID}`}
-                            title="YouTube video player"
-                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                            allowFullScreen
-                          />
+              <AnimatePresence mode="wait">
+                {showBeforeAfter && selectedQuestion && (
+                  <motion.div
+                    key={selectedQuestion}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -20 }}
+                    transition={{ duration: 0.5 }}
+                    className="mt-6"
+                  >
+                    <div className="flex items-start gap-3">
+                      {/* 원장님 프로필 */}
+                      <div className="flex-shrink-0">
+                        <div className="w-12 h-12 rounded-full overflow-hidden bg-gradient-to-br from-green-400 to-blue-500 flex items-center justify-center text-white font-bold shadow-md border-2 border-white relative">
+                          {process.env.NEXT_PUBLIC_SUPABASE_URL ? (
+                            <Image
+                              src={`${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/landing-images/profile.jpg`}
+                              alt="원장님"
+                              fill
+                              className="object-cover"
+                              unoptimized
+                            />
+                          ) : (
+                            <span>원</span>
+                          )}
                         </div>
-                        
-                        <p className="text-xs text-gray-500 mt-3">
-                          💡 자세한 내용은 영상을 참고해주세요
-                        </p>
                       </div>
-                      <p className="text-xs text-gray-400 mt-1">방금 전</p>
+
+                      <div className="flex-1">
+                        <div className="bg-white rounded-2xl p-4 shadow-md border border-gray-200">
+                          <p className="text-sm font-semibold text-gray-900 mb-3">
+                            {questionButtons.find(q => q.id === selectedQuestion)?.text}에 대한 답변
+                          </p>
+                          
+                          {/* 유튜브 쇼츠 임베드 */}
+                          <div className="relative w-full" style={{ paddingBottom: '177.78%' }}>
+                            <iframe
+                              key={selectedQuestion}
+                              className="absolute top-0 left-0 w-full h-full rounded-lg"
+                              src={`https://www.youtube.com/embed/${TEMP_YOUTUBE_VIDEO_ID}`}
+                              title="YouTube video player"
+                              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                              allowFullScreen
+                            />
+                          </div>
+                          
+                          <p className="text-xs text-gray-500 mt-3">
+                            💡 자세한 내용은 영상을 참고해주세요
+                          </p>
+                        </div>
+                        <p className="text-xs text-gray-400 mt-1">방금 전</p>
+                      </div>
                     </div>
-                  </div>
-                </motion.div>
-              )}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
+              {/* 질문 버튼들 (선택되지 않은 것만 표시) */}
+              <AnimatePresence mode="wait">
+                {showBeforeAfter && showQuestions && (
+                  <motion.div
+                    key={`questions-${selectedQuestion || 'all'}`}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    transition={{ delay: selectedQuestion ? 0.3 : 0.4, duration: 0.5 }}
+                    className="mt-6 space-y-3"
+                  >
+                    {questionButtons
+                      .filter(question => question.id !== selectedQuestion)
+                      .map((question, index) => (
+                        <motion.button
+                          key={question.id}
+                          initial={{ opacity: 0, x: -20 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ delay: (selectedQuestion ? 0.4 : 0.5) + index * 0.1 }}
+                          onClick={() => handleQuestionClick(question.id)}
+                          className="w-full bg-white border-2 border-blue-200 text-gray-800 rounded-xl px-4 py-3 hover:border-blue-400 hover:bg-blue-50 transition-all shadow-sm hover:shadow-md text-sm text-left font-medium"
+                        >
+                          {question.text}
+                        </motion.button>
+                      ))}
+                  </motion.div>
+                )}
+              </AnimatePresence>
 
               {/* 하단 안내 */}
               <motion.div

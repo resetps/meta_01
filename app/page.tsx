@@ -3,6 +3,7 @@ import RevisionTypeGrid from "@/components/RevisionTypeGrid";
 import DoctorProfileSection from "@/components/DoctorProfileSection";
 import ReviewCardsSection from "@/components/ReviewCardsSection";
 import LeadForm from "@/components/LeadForm";
+import FloatingLeadForm from "@/components/FloatingLeadForm";
 
 export default function Home() {
   return (
@@ -21,6 +22,9 @@ export default function Home() {
 
       {/* 리드 폼 (유형 선택 후 나타남) */}
       <LeadForm />
+
+      {/* 플로팅 상담 신청 폼 */}
+      <FloatingLeadForm />
 
       {/* Footer */}
       <footer className="bg-gray-900 text-white py-12 px-4 sm:px-6 lg:px-8">

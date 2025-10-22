@@ -355,7 +355,8 @@ export default function ReviewCardsSection() {
           className="text-center mt-2 sm:mt-4 relative z-20"
         >
           <p className="text-sm sm:text-base text-gray-600">
-            강남언니 평균 평점 10.0점! <span className="font-semibold text-gray-900">실제 환자분들의 생생한 후기</span>입니다
+            강남언니 평균 평점 10.0점!<br />
+            <span className="font-semibold text-gray-900">실제 환자분들의 생생한 후기입니다</span>
           </p>
         </motion.div>
       </div>
