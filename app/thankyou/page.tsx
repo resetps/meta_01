@@ -6,13 +6,63 @@ import { useRouter } from "next/navigation";
 export default function ThankYouPage() {
   const router = useRouter();
 
+  // 버튼 데이터 배열
+  const buttons = [
+    {
+      emoji: "💬",
+      text: "카카오톡 문의",
+      href: "http://pf.kakao.com/_CIxmrn/chat",
+      external: true,
+      emphasized: true,
+      bgColor: "bg-yellow-400 hover:bg-yellow-500",
+      textColor: "text-gray-900",
+    },
+    {
+      emoji: "📞",
+      text: "전화 상담",
+      href: "tel:02-6246-1113",
+      external: false,
+      emphasized: true,
+      bgColor: "bg-blue-600 hover:bg-blue-700",
+      textColor: "text-white",
+    },
+    {
+      emoji: "📸",
+      text: "전후사진 더보기",
+      href: "https://www.instagram.com/resetps_ba/reels/",
+      external: true,
+      emphasized: false,
+    },
+    {
+      emoji: "📹",
+      text: "리셋 공식 유튜브",
+      href: "https://www.youtube.com/@resetps/",
+      external: true,
+      emphasized: false,
+    },
+    {
+      emoji: "🌐",
+      text: "홈페이지 바로가기",
+      href: "https://bit.ly/47ClQCA",
+      external: true,
+      emphasized: false,
+    },
+    {
+      emoji: "🗺️",
+      text: "병원 위치 보기",
+      href: "https://naver.me/xdjDQYle",
+      external: true,
+      emphasized: false,
+    },
+  ];
+
   return (
-    <main className="min-h-screen bg-gradient-to-b from-white to-blue-50 flex items-center justify-center px-4">
+    <main className="min-h-screen bg-white flex items-center justify-center px-4 py-8">
       <motion.div
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.5 }}
-        className="max-w-2xl w-full text-center"
+        className="max-w-xl w-full"
       >
         {/* 체크 아이콘 */}
         <motion.div
@@ -41,7 +91,7 @@ export default function ThankYouPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
-          className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4"
+          className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4 text-center"
         >
           상담 신청이 완료되었습니다!
         </motion.h1>
@@ -51,49 +101,49 @@ export default function ThankYouPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
-          className="text-lg text-gray-600 mb-8"
+          className="text-lg text-gray-600 mb-8 text-center"
         >
           빠른 시일 내에 연락드리겠습니다
         </motion.p>
 
-        {/* 버튼들 */}
+        {/* 버튼들 - 세로 정렬 */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5 }}
-          className="flex flex-col sm:flex-row gap-4 justify-center mb-8"
+          className="flex flex-col gap-3 mb-8"
         >
-          <a
-            href="http://pf.kakao.com/_CIxmrn/chat"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-yellow-400 hover:bg-yellow-500 text-gray-900 font-semibold rounded-lg transition-all shadow-lg hover:shadow-xl"
-          >
-            <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M12 3c5.799 0 10.5 3.664 10.5 8.185 0 4.52-4.701 8.184-10.5 8.184a13.5 13.5 0 01-1.727-.11l-4.408 2.883c-.501.265-.678.236-.472-.413l.892-3.678c-2.88-1.46-4.785-3.99-4.785-6.866C1.5 6.665 6.201 3 12 3z" />
-            </svg>
-            카카오톡 상담
-          </a>
-          <a
-            href="tel:02-6246-1113"
-            className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-all shadow-lg hover:shadow-xl"
-          >
-            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-            </svg>
-            전화 상담
-          </a>
+          {buttons.map((button, index) => (
+            <motion.a
+              key={index}
+              href={button.href}
+              target={button.external ? "_blank" : undefined}
+              rel={button.external ? "noopener noreferrer" : undefined}
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.6 + index * 0.1 }}
+              className={`flex items-center justify-center gap-3 px-6 py-4 font-semibold rounded-2xl transition-all shadow-md hover:shadow-lg ${
+                button.emphasized
+                  ? `${button.bgColor} ${button.textColor}`
+                  : "bg-gray-50 hover:bg-gray-100 text-gray-900 border-2 border-gray-200"
+              }`}
+            >
+              <span className="text-2xl">{button.emoji}</span>
+              <span className="text-base">{button.text}</span>
+            </motion.a>
+          ))}
         </motion.div>
 
         {/* 홈으로 돌아가기 버튼 */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 0.6 }}
+          transition={{ delay: 1.2 }}
+          className="text-center"
         >
           <button
-            onClick={() => router.push('/')}
-            className="text-blue-600 hover:text-blue-700 font-medium underline"
+            onClick={() => router.push("/")}
+            className="text-gray-600 hover:text-gray-800 font-medium underline"
           >
             ← 홈으로 돌아가기
           </button>
