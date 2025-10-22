@@ -10,12 +10,15 @@ import { useState, useEffect } from "react";
 import { revisionTypes } from "@/data/revisionTypes";
 import { useRouter } from "next/navigation";
 
-// Zod 스키마 정의 (consent 제외 - 플로팅 폼은 간소화)
+// Zod 스키마 정의
 const floatingFormSchema = z.object({
   name: z.string().min(2, "이름 2자 이상"),
   phone: z
     .string()
     .regex(/^01[0-9]-?[0-9]{4}-?[0-9]{4}$/, "휴대폰 번호 형식 오류"),
+  consent: z.boolean().refine((val) => val === true, {
+    message: "개인정보 수집 및 이용에 동의해주세요",
+  }),
 });
 
 type FormData = z.infer<typeof floatingFormSchema>;
@@ -25,6 +28,7 @@ export default function FloatingLeadForm() {
   const [errorMessage, setErrorMessage] = useState<string>("");
   const [isVisible, setIsVisible] = useState(true);
   const [isExpanded, setIsExpanded] = useState(false);
+  const [showPrivacyModal, setShowPrivacyModal] = useState(false);
   const router = useRouter();
 
   const {
@@ -35,6 +39,9 @@ export default function FloatingLeadForm() {
     setValue,
   } = useForm<FormData>({
     resolver: zodResolver(floatingFormSchema),
+    defaultValues: {
+      consent: true, // 기본값으로 체크됨
+    },
   });
 
   // 전화번호 자동 포맷팅 함수
@@ -64,10 +71,10 @@ export default function FloatingLeadForm() {
       }
     );
 
-    // LeadForm 섹션 찾기 (selectedTypeId가 있을 때만)
+    // LeadForm 섹션 찾기 (항상 감지)
     const targetElement = document.querySelector('section[class*="from-white to-blue-50"]');
     
-    if (targetElement && selectedTypeId) {
+    if (targetElement) {
       observer.observe(targetElement);
     } else {
       setIsVisible(true);
@@ -78,28 +85,28 @@ export default function FloatingLeadForm() {
         observer.unobserve(targetElement);
       }
     };
-  }, [selectedTypeId]);
+  }, []);
 
   const onSubmit = async (data: FormData) => {
     try {
       setErrorMessage("");
 
-      if (!selectedTypeId) {
-        setErrorMessage("유형을 먼저 선택해주세요");
-        return;
-      }
-
-      const selectedType = revisionTypes.find(type => type.id === selectedTypeId);
-      if (!selectedType) {
-        setErrorMessage("유형 정보를 찾을 수 없습니다");
-        return;
+      // 선택된 유형의 제목 찾기 (없으면 '선택안함')
+      let revisionTypeId = selectedTypeId || 0; // 0은 선택안함을 의미
+      let revisionTypeTitle = "선택안함";
+      
+      if (selectedTypeId) {
+        const selectedType = revisionTypes.find(type => type.id === selectedTypeId);
+        if (selectedType) {
+          revisionTypeTitle = selectedType.title;
+        }
       }
 
       const result = await submitLead({
         name: data.name,
         phone: data.phone,
-        revisionTypeId: selectedTypeId,
-        revisionTypeTitle: selectedType.title,
+        revisionTypeId: revisionTypeId,
+        revisionTypeTitle: revisionTypeTitle,
       });
 
       if (!result.success) {
@@ -165,72 +172,215 @@ export default function FloatingLeadForm() {
                   </button>
                 </div>
 
-                <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3">
-                  {/* 안내 텍스트 */}
-                  <div className="hidden sm:block text-white flex-shrink-0">
-                    <p className="text-sm font-bold">🎁 무료 상담 신청</p>
-                  </div>
+                <form onSubmit={handleSubmit(onSubmit)} className="space-y-3">
+                  {/* 첫 번째 행: 입력 필드와 버튼 */}
+                  <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3">
+                    {/* 안내 텍스트 */}
+                    <div className="hidden sm:block text-white flex-shrink-0">
+                      <p className="text-sm font-bold">🎁 무료 상담 신청</p>
+                    </div>
 
-                  {/* 이름 입력 */}
-                  <div className="flex-1 sm:max-w-[180px]">
-                    <input
-                      {...register("name")}
-                      type="text"
-                      placeholder="이름"
-                      className={`w-full px-3 py-2.5 sm:py-3 border-2 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-white transition-all ${
-                        errors.name ? "border-red-400 bg-red-50" : "border-white/30 bg-white"
+                    {/* 이름 입력 */}
+                    <div className="flex-1 sm:max-w-[180px]">
+                      <input
+                        {...register("name")}
+                        type="text"
+                        placeholder="이름"
+                        className={`w-full px-3 py-2.5 sm:py-3 border-2 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-white transition-all ${
+                          errors.name ? "border-red-400 bg-red-50" : "border-white/30 bg-white"
+                        }`}
+                      />
+                    </div>
+
+                    {/* 연락처 입력 */}
+                    <div className="flex-1 sm:max-w-[200px]">
+                      <input
+                        {...register("phone")}
+                        type="tel"
+                        placeholder="010-1234-5678"
+                        onChange={(e) => {
+                          const formatted = formatPhoneNumber(e.target.value);
+                          setValue("phone", formatted);
+                        }}
+                        className={`w-full px-3 py-2.5 sm:py-3 border-2 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-white transition-all ${
+                          errors.phone ? "border-red-400 bg-red-50" : "border-white/30 bg-white"
+                        }`}
+                      />
+                    </div>
+
+                    {/* 제출 버튼 */}
+                    <button
+                      type="submit"
+                      disabled={isSubmitting}
+                      className={`flex-shrink-0 px-6 py-2.5 sm:py-3 rounded-lg font-bold text-sm sm:text-base transition-all shadow-lg ${
+                        isSubmitting
+                          ? "bg-gray-400 cursor-not-allowed text-white"
+                          : "bg-white text-blue-600 hover:bg-gray-100 hover:shadow-xl active:scale-95"
                       }`}
-                    />
+                    >
+                      {isSubmitting ? "전송중..." : "상담 신청"}
+                    </button>
                   </div>
 
-                  {/* 연락처 입력 */}
-                  <div className="flex-1 sm:max-w-[200px]">
+                  {/* 두 번째 행: 개인정보 동의 */}
+                  <div className="flex items-start gap-2">
                     <input
-                      {...register("phone")}
-                      type="tel"
-                      placeholder="010-1234-5678"
-                      onChange={(e) => {
-                        const formatted = formatPhoneNumber(e.target.value);
-                        setValue("phone", formatted);
-                      }}
-                      className={`w-full px-3 py-2.5 sm:py-3 border-2 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-white transition-all ${
-                        errors.phone ? "border-red-400 bg-red-50" : "border-white/30 bg-white"
-                      }`}
+                      {...register("consent")}
+                      type="checkbox"
+                      id="floating-consent"
+                      className="mt-0.5 w-4 h-4 text-white border-white/30 rounded focus:ring-white bg-white/20"
                     />
+                    <label htmlFor="floating-consent" className="text-xs text-white/90 leading-tight">
+                      <span className="font-semibold">[필수]</span> 개인정보 수집 및 이용에 동의합니다.
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          setShowPrivacyModal(true);
+                        }}
+                        className="block mt-0.5 text-[10px] text-white underline hover:text-white/80"
+                      >
+                        개인정보 처리방침 [보기]
+                      </button>
+                    </label>
                   </div>
 
-                  {/* 제출 버튼 */}
-                  <button
-                    type="submit"
-                    disabled={isSubmitting}
-                    className={`flex-shrink-0 px-6 py-2.5 sm:py-3 rounded-lg font-bold text-sm sm:text-base transition-all shadow-lg ${
-                      isSubmitting
-                        ? "bg-gray-400 cursor-not-allowed text-white"
-                        : "bg-white text-blue-600 hover:bg-gray-100 hover:shadow-xl active:scale-95"
-                    }`}
-                  >
-                    {isSubmitting ? "전송중..." : "상담 신청"}
-                  </button>
+                  {/* 에러 메시지 */}
+                  {(errorMessage || errors.consent) && (
+                    <motion.p
+                      initial={{ opacity: 0, y: -10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="text-xs text-yellow-200 text-center"
+                    >
+                      ⚠️ {errorMessage || errors.consent?.message}
+                    </motion.p>
+                  )}
                 </form>
-
-                {/* 에러 메시지 */}
-                {errorMessage && (
-                  <motion.p
-                    initial={{ opacity: 0, y: -10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="text-xs text-yellow-200 mt-2 text-center"
-                  >
-                    ⚠️ {errorMessage}
-                  </motion.p>
-                )}
-
-                {/* 개인정보 동의 안내 */}
-                <p className="text-[10px] sm:text-xs text-white/70 text-center mt-2">
-                  신청 시 <span className="underline">개인정보 수집 및 이용</span>에 동의한 것으로 간주됩니다
-                </p>
               </div>
             </div>
           )}
+        </motion.div>
+      )}
+
+      {/* 개인정보 처리방침 모달 */}
+      {showPrivacyModal && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-50"
+          onClick={() => setShowPrivacyModal(false)}
+        >
+          <motion.div
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0.9, opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[80vh] overflow-hidden"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* 헤더 */}
+            <div className="flex items-center justify-between p-6 border-b border-gray-200 bg-gradient-to-r from-blue-50 to-white">
+              <h3 className="text-xl font-bold text-gray-900">개인정보 처리방침</h3>
+              <button
+                onClick={() => setShowPrivacyModal(false)}
+                className="text-gray-400 hover:text-gray-600 transition-colors"
+              >
+                <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+
+            {/* 내용 (스크롤 가능) */}
+            <div className="p-6 overflow-y-auto max-h-[calc(80vh-140px)]">
+              <div className="space-y-6 text-sm text-gray-700">
+                <section>
+                  <h4 className="font-bold text-base text-gray-900 mb-2">1. 개인정보의 수집 및 이용 목적</h4>
+                  <p className="leading-relaxed">
+                    리셋성형외과는 상담 신청 및 예약 관리, 고객 응대 및 상담 서비스 제공을 목적으로 개인정보를 수집합니다.
+                  </p>
+                </section>
+
+                <section>
+                  <h4 className="font-bold text-base text-gray-900 mb-2">2. 수집하는 개인정보의 항목</h4>
+                  <p className="leading-relaxed mb-2">
+                    <span className="font-semibold">필수항목:</span> 이름, 휴대폰번호, 상담 유형
+                  </p>
+                  <p className="leading-relaxed text-gray-600 text-xs">
+                    ※ 서비스 이용 과정에서 IP주소, 접속 로그, 쿠키, 접속 기기정보 등이 자동으로 수집될 수 있습니다.
+                  </p>
+                </section>
+
+                <section>
+                  <h4 className="font-bold text-base text-gray-900 mb-2">3. 개인정보의 보유 및 이용기간</h4>
+                  <p className="leading-relaxed">
+                    상담 완료 후 3개월까지 보관하며, 보유기간 경과 시 지체없이 파기합니다. 단, 관련 법령에 의해 보존할 필요가 있는 경우 해당 법령에서 정한 기간 동안 보관합니다.
+                  </p>
+                </section>
+
+                <section>
+                  <h4 className="font-bold text-base text-gray-900 mb-2">4. 개인정보의 파기절차 및 방법</h4>
+                  <p className="leading-relaxed mb-2">
+                    <span className="font-semibold">파기절차:</span> 보유기간이 경과한 개인정보는 종료일로부터 지체없이 파기합니다.
+                  </p>
+                  <p className="leading-relaxed">
+                    <span className="font-semibold">파기방법:</span> 전자적 파일은 복구 불가능한 방법으로 영구 삭제하며, 종이 문서는 분쇄기로 분쇄하거나 소각합니다.
+                  </p>
+                </section>
+
+                <section>
+                  <h4 className="font-bold text-base text-gray-900 mb-2">5. 개인정보 제공 및 공유</h4>
+                  <p className="leading-relaxed">
+                    회사는 이용자의 개인정보를 원칙적으로 외부에 제공하지 않습니다. 다만, 법령에 의하거나 이용자의 동의가 있는 경우는 예외로 합니다.
+                  </p>
+                </section>
+
+                <section>
+                  <h4 className="font-bold text-base text-gray-900 mb-2">6. 이용자의 권리</h4>
+                  <p className="leading-relaxed">
+                    이용자는 언제든지 본인의 개인정보를 조회하거나 수정, 삭제, 처리정지를 요구할 수 있습니다. 
+                    개인정보 보호 관련 문의사항은 고객센터(02-6246-1113)로 연락주시기 바랍니다.
+                  </p>
+                </section>
+
+                <section>
+                  <h4 className="font-bold text-base text-gray-900 mb-2">7. 개인정보 보호책임자</h4>
+                  <p className="leading-relaxed">
+                    리셋성형외과는 개인정보 처리에 관한 업무를 총괄해서 책임지고, 개인정보 처리와 관련한 정보주체의 불만처리 및 피해구제를 위하여 개인정보 보호책임자를 지정하고 있습니다.
+                  </p>
+                  <div className="mt-2 p-3 bg-gray-50 rounded-lg">
+                    <p className="text-xs">▶ 개인정보 보호책임자</p>
+                    <p className="text-xs">- 연락처: 02-6246-1113</p>
+                    <p className="text-xs">- 이메일: info@resetps.com</p>
+                  </div>
+                </section>
+
+                <section>
+                  <h4 className="font-bold text-base text-gray-900 mb-2">8. 개인정보 처리방침 변경</h4>
+                  <p className="leading-relaxed">
+                    본 개인정보 처리방침은 법령 및 정책 변경에 따라 변경될 수 있으며, 변경 시 웹사이트를 통해 공지합니다.
+                  </p>
+                </section>
+
+                <section className="pt-4 border-t border-gray-200">
+                  <p className="text-xs text-gray-500 text-center">
+                    시행일자: 2024년 1월 1일
+                  </p>
+                </section>
+              </div>
+            </div>
+
+            {/* 하단 버튼 */}
+            <div className="p-6 border-t border-gray-200 bg-gray-50">
+              <button
+                onClick={() => setShowPrivacyModal(false)}
+                className="w-full py-3 px-6 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-all shadow-md hover:shadow-lg"
+              >
+                확인
+              </button>
+            </div>
+          </motion.div>
         </motion.div>
       )}
     </AnimatePresence>

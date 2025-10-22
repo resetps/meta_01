@@ -40,10 +40,11 @@ export async function submitLead(data: SubmitLeadData): Promise<SubmitLeadResult
       };
     }
 
-    if (!data.revisionTypeId || data.revisionTypeId < 1 || data.revisionTypeId > 9) {
+    // 유형 선택은 선택사항 (0 = 선택안함 허용)
+    if (data.revisionTypeId < 0 || data.revisionTypeId > 9) {
       return {
         success: false,
-        message: "유형을 먼저 선택해주세요.",
+        message: "유형 정보가 올바르지 않습니다.",
       };
     }
 

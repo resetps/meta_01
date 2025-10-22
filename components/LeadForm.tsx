@@ -37,6 +37,9 @@ export default function LeadForm() {
     setValue,
   } = useForm<FormData>({
     resolver: zodResolver(leadFormSchema),
+    defaultValues: {
+      consent: true, // 기본값으로 체크됨
+    },
   });
 
   // 전화번호 자동 포맷팅 함수
@@ -57,24 +60,23 @@ export default function LeadForm() {
     try {
       setErrorMessage("");
 
-      if (!selectedTypeId) {
-        setErrorMessage("유형을 먼저 선택해주세요.");
-        return;
-      }
-
-      // 선택된 유형의 제목 찾기
-      const selectedType = revisionTypes.find(type => type.id === selectedTypeId);
-      if (!selectedType) {
-        setErrorMessage("유형 정보를 찾을 수 없습니다.");
-        return;
+      // 선택된 유형의 제목 찾기 (없으면 '선택안함')
+      let revisionTypeId = selectedTypeId || 0; // 0은 선택안함을 의미
+      let revisionTypeTitle = "선택안함";
+      
+      if (selectedTypeId) {
+        const selectedType = revisionTypes.find(type => type.id === selectedTypeId);
+        if (selectedType) {
+          revisionTypeTitle = selectedType.title;
+        }
       }
 
       // Server Action 호출
       const result = await submitLead({
         name: data.name,
         phone: data.phone,
-        revisionTypeId: selectedTypeId,
-        revisionTypeTitle: selectedType.title, // 제목 전달
+        revisionTypeId: revisionTypeId,
+        revisionTypeTitle: revisionTypeTitle,
       });
 
       if (!result.success) {
@@ -92,11 +94,7 @@ export default function LeadForm() {
     }
   };
 
-  // 유형이 선택되지 않았으면 렌더링하지 않음
-  if (!selectedTypeId) {
-    return null;
-  }
-
+  // 항상 렌더링 (유형 선택 선택 사항)
   return (
     <motion.section
       initial={{ opacity: 0, height: 0 }}
