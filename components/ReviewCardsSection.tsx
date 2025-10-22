@@ -20,6 +20,7 @@ export default function ReviewCardsSection() {
   const [hoveredCardIndex, setHoveredCardIndex] = useState<number | null>(null); // hover된 카드
   const [autoShowCardIndex, setAutoShowCardIndex] = useState<number | null>(null); // 자동 표시 카드
   const [isUserInteracting, setIsUserInteracting] = useState(false); // 사용자 인터랙션 중
+  const [progressValue, setProgressValue] = useState(0); // progress 값 (state로 관리)
   
   // 애니메이션 진행도 (0 ~ 14, 카드 개수 기준)
   const progress = useMotionValue(0);
@@ -60,6 +61,31 @@ export default function ReviewCardsSection() {
     { rotate: 8, zIndex: 13, x: 35, y: 50 },
     { rotate: 10, zIndex: 14, x: 42, y: 60 },
   ];
+
+  // progress 값을 state로 동기화
+  useEffect(() => {
+    const unsubscribe = progress.on("change", (latest) => {
+      setProgressValue(latest);
+    });
+    return unsubscribe;
+  }, [progress]);
+
+  // 카드 transform 계산 함수
+  const getCardTransform = (index: number, progressValue: number) => {
+    const style = cardStyles[index];
+    const startProgress = index;
+    const endProgress = index + 1;
+    
+    // progress 값을 해당 카드의 범위로 정규화
+    const normalized = Math.max(0, Math.min(1, (progressValue - startProgress) / (endProgress - startProgress)));
+    
+    return {
+      y: 500 + (style.y - 500) * normalized,
+      scale: 0.8 + (1 - 0.8) * normalized,
+      rotate: 0 + style.rotate * normalized,
+      x: 0 + style.x * normalized,
+    };
+  };
 
   // 휠 이벤트 처리 - 카드 하나씩 등장
   useEffect(() => {
@@ -204,44 +230,7 @@ export default function ReviewCardsSection() {
         <div className="relative flex items-center justify-center h-[600px] sm:h-[700px] lg:h-[800px] overflow-hidden z-10">
           {reviewImages.map((fileName, index) => {
             const style = cardStyles[index];
-            
-            // 각 카드의 등장 범위 (카드 인덱스 기준)
-            // index번째 카드는 progress가 index일 때 등장 시작, index+1일 때 완전 등장
-            const startProgress = index;
-            const endProgress = index + 1;
-            
-            // 진행도에 따른 Y 위치 변환 (500px 아래에서 시작 - 완전히 화면 밖)
-            // clamp: true로 범위 밖에서는 경계값 유지
-            const cardY = useTransform(
-              progress,
-              [startProgress, endProgress],
-              [500, style.y],
-              { clamp: true }
-            );
-            
-            // 진행도에 따른 스케일 변환
-            const cardScale = useTransform(
-              progress,
-              [startProgress, endProgress],
-              [0.8, 1],
-              { clamp: true }
-            );
-            
-            // 진행도에 따른 회전 변환
-            const cardRotate = useTransform(
-              progress,
-              [startProgress, endProgress],
-              [0, style.rotate],
-              { clamp: true }
-            );
-            
-            // 진행도에 따른 X 위치 변환
-            const cardX = useTransform(
-              progress,
-              [startProgress, endProgress],
-              [0, style.x],
-              { clamp: true }
-            );
+            const transforms = getCardTransform(index, progressValue);
             
             // 모든 카드가 등장 완료되었는지 확인
             const allCardsVisible = currentCardIndex >= reviewImages.length;
@@ -254,10 +243,10 @@ export default function ReviewCardsSection() {
                 className={`absolute ${allCardsVisible ? 'cursor-pointer' : 'cursor-default'}`}
                 style={{ 
                   zIndex: style.zIndex,  // z-index 순서 유지 (변경 없음)
-                  y: cardY,
-                  scale: cardScale,
-                  rotate: cardRotate,
-                  x: cardX
+                  y: transforms.y,
+                  scale: transforms.scale,
+                  rotate: transforms.rotate,
+                  x: transforms.x
                 }}
                 onMouseEnter={() => {
                   if (allCardsVisible) {
