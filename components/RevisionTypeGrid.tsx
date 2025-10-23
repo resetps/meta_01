@@ -51,8 +51,13 @@ const questionButtons = [
   { id: 4, text: "재수술은 회복기간이 더 오래걸리나요?" },
 ];
 
-// 임시 유튜브 영상 ID
-const TEMP_YOUTUBE_VIDEO_ID = "6qVm5NcxVaA";
+// 질문별 유튜브 영상 ID 매핑
+const questionYoutubeVideos: Record<number, string> = {
+  1: "6qVm5NcxVaA", // 코 재수술은 언제부터 가능할까요?
+  2: "6qVm5NcxVaA", // 코끝만 재수술 할 수 있나요?
+  3: "6qVm5NcxVaA", // 꼭 자가늑연골을 써야 하나요?
+  4: "Ij5HTQ1CJHM", // 재수술은 회복기간이 더 오래걸리나요?
+};
 
 export default function RevisionTypeGrid() {
   const { selectedTypeId, setSelectedTypeId } = useLeadStore();
@@ -723,7 +728,7 @@ export default function RevisionTypeGrid() {
                             <iframe
                               key={selectedQuestion}
                               className="absolute top-0 left-0 w-full h-full rounded-lg"
-                              src={`https://www.youtube.com/embed/${TEMP_YOUTUBE_VIDEO_ID}`}
+                              src={`https://www.youtube.com/embed/${selectedQuestion ? questionYoutubeVideos[selectedQuestion] : questionYoutubeVideos[1]}`}
                               title="YouTube video player"
                               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                               allowFullScreen

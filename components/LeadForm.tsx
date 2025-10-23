@@ -166,7 +166,7 @@ export default function LeadForm() {
                 {...register("phone")}
                 type="tel"
                 id="phone"
-                placeholder="010-1234-5678"
+                placeholder="'-'없이 숫자만 입력해주세요"
                 onChange={(e) => {
                   const formatted = formatPhoneNumber(e.target.value);
                   setValue("phone", formatted);
