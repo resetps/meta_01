@@ -21,9 +21,22 @@ export default function ReviewCardsSection() {
   const [autoShowCardIndex, setAutoShowCardIndex] = useState<number | null>(null); // 자동 표시 카드
   const [isUserInteracting, setIsUserInteracting] = useState(false); // 사용자 인터랙션 중
   const [progressValue, setProgressValue] = useState(0); // progress 값 (state로 관리)
+  const [isMobile, setIsMobile] = useState(false); // 모바일 환경 감지
   
   // 애니메이션 진행도 (0 ~ 14, 카드 개수 기준)
   const progress = useMotionValue(0);
+
+  // 모바일 환경 감지
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   // 후기 이미지 파일명 배열 (14개)
   const reviewImages = [
@@ -87,8 +100,11 @@ export default function ReviewCardsSection() {
     };
   };
 
-  // 휠 이벤트 처리 - 카드 하나씩 등장
+  // 휠 이벤트 처리 - 카드 하나씩 등장 (PC 전용)
   useEffect(() => {
+    // 모바일에서는 휠 이벤트 비활성화
+    if (isMobile) return;
+    
     let wheelTimeout: NodeJS.Timeout | null = null;
     
     const handleWheel = (e: WheelEvent) => {
@@ -147,7 +163,7 @@ export default function ReviewCardsSection() {
         clearTimeout(wheelTimeout);
       }
     };
-  }, [isInView, currentCardIndex, progress, reviewImages.length]);
+  }, [isMobile, isInView, currentCardIndex, progress, reviewImages.length]);
 
   // IntersectionObserver로 뷰포트 진입 감지
   useEffect(() => {
@@ -174,6 +190,34 @@ export default function ReviewCardsSection() {
       }
     };
   }, []);
+
+  // 모바일에서 자동으로 카드 등장
+  useEffect(() => {
+    // PC이거나, 화면에 보이지 않거나, 모든 카드가 이미 등장했으면 실행 안 함
+    if (!isMobile || !isInView || currentCardIndex >= reviewImages.length) {
+      return;
+    }
+
+    // 점진적으로 증가하는 딜레이 (60ms부터 시작해서 10ms씩 증가)
+    const baseDelay = 60;
+    const increment = 10;
+    const delay = baseDelay + (currentCardIndex * increment);
+    
+    const timer = setTimeout(() => {
+      const nextIndex = currentCardIndex + 1;
+      setCurrentCardIndex(nextIndex);
+      
+      // 부드러운 스프링 애니메이션으로 progress 업데이트
+      animate(progress, nextIndex, {
+        type: "spring",
+        stiffness: 200,
+        damping: 20,
+        mass: 0.5
+      });
+    }, delay);
+
+    return () => clearTimeout(timer);
+  }, [isMobile, isInView, currentCardIndex, progress, reviewImages.length]);
 
   // 자동 카드 표시 효과 (모든 카드 등장 후)
   useEffect(() => {
