@@ -18,30 +18,6 @@ export interface SubmitLeadResult {
 }
 
 /**
- * URL에서 UTM 파라미터를 추출하는 함수
- */
-function extractUTMParams(url: string) {
-  try {
-    const urlObj = new URL(url);
-    return {
-      utm_source: urlObj.searchParams.get("utm_source") || undefined,
-      utm_medium: urlObj.searchParams.get("utm_medium") || undefined,
-      utm_campaign: urlObj.searchParams.get("utm_campaign") || undefined,
-      utm_term: urlObj.searchParams.get("utm_term") || undefined,
-      utm_content: urlObj.searchParams.get("utm_content") || undefined,
-    };
-  } catch {
-    return {
-      utm_source: undefined,
-      utm_medium: undefined,
-      utm_campaign: undefined,
-      utm_term: undefined,
-      utm_content: undefined,
-    };
-  }
-}
-
-/**
  * 리드 폼 제출을 처리하는 Server Action
  * 
  * @param data - 폼 데이터 (이름, 연락처, 선택한 유형)
@@ -86,15 +62,6 @@ export async function submitLead(data: SubmitLeadData): Promise<SubmitLeadResult
     const forwardedFor = headersList.get("x-forwarded-for");
     const ipAddress = forwardedFor ? forwardedFor.split(",")[0] : undefined;
 
-    // referrer URL에서 UTM 파라미터 추출
-    const utmParams = referrer ? extractUTMParams(referrer) : {
-      utm_source: undefined,
-      utm_medium: undefined,
-      utm_campaign: undefined,
-      utm_term: undefined,
-      utm_content: undefined,
-    };
-
     // Supabase에 데이터 저장
     const { data: lead, error } = await supabaseAdmin
       .from("leads")
@@ -105,11 +72,6 @@ export async function submitLead(data: SubmitLeadData): Promise<SubmitLeadResult
         user_agent: userAgent,
         ip_address: ipAddress,
         referrer: referrer,
-        utm_source: utmParams.utm_source,
-        utm_medium: utmParams.utm_medium,
-        utm_campaign: utmParams.utm_campaign,
-        utm_term: utmParams.utm_term,
-        utm_content: utmParams.utm_content,
         status: "new",
         consent_privacy: true, // 폼에서 동의 체크했음
       })
@@ -176,22 +138,6 @@ export async function submitLeadWithUTM(
     const forwardedFor = headersList.get("x-forwarded-for");
     const ipAddress = forwardedFor ? forwardedFor.split(",")[0] : undefined;
 
-    // UTM 파라미터가 제공되지 않으면 referrer에서 추출
-    const extractedUTM = referrer ? extractUTMParams(referrer) : {
-      utm_source: undefined,
-      utm_medium: undefined,
-      utm_campaign: undefined,
-      utm_term: undefined,
-      utm_content: undefined,
-    };
-    const finalUTM = {
-      utm_source: utmParams?.source || extractedUTM.utm_source,
-      utm_medium: utmParams?.medium || extractedUTM.utm_medium,
-      utm_campaign: utmParams?.campaign || extractedUTM.utm_campaign,
-      utm_term: utmParams?.term || extractedUTM.utm_term,
-      utm_content: utmParams?.content || extractedUTM.utm_content,
-    };
-
     const { data: lead, error } = await supabaseAdmin
       .from("leads")
       .insert({
@@ -201,11 +147,11 @@ export async function submitLeadWithUTM(
         user_agent: userAgent,
         ip_address: ipAddress,
         referrer: referrer,
-        utm_source: finalUTM.utm_source,
-        utm_medium: finalUTM.utm_medium,
-        utm_campaign: finalUTM.utm_campaign,
-        utm_term: finalUTM.utm_term,
-        utm_content: finalUTM.utm_content,
+        utm_source: utmParams?.source,
+        utm_medium: utmParams?.medium,
+        utm_campaign: utmParams?.campaign,
+        utm_term: utmParams?.term,
+        utm_content: utmParams?.content,
         status: "new",
         consent_privacy: true,
       })

@@ -249,3 +249,6 @@ Supabase Dashboard에서:
 
 
 
+
+
+
