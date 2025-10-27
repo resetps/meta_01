@@ -1,13 +1,20 @@
+import { Suspense } from "react";
 import HeroSection from "@/components/HeroSection";
 import RevisionTypeGrid from "@/components/RevisionTypeGrid";
 import DoctorProfileSection from "@/components/DoctorProfileSection";
 import ReviewCardsSection from "@/components/ReviewCardsSection";
 import LeadForm from "@/components/LeadForm";
 import FloatingLeadForm from "@/components/FloatingLeadForm";
+import UTMTracker from "@/components/UTMTracker";
 
 export default function Home() {
   return (
     <main className="min-h-screen">
+      {/* UTM 파라미터 추적 */}
+      <Suspense fallback={null}>
+        <UTMTracker />
+      </Suspense>
+
       {/* Hero 섹션 */}
       <HeroSection />
 

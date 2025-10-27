@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { useLeadStore } from "@/store/useLeadStore";
-import { submitLead } from "@/app/actions/submit-lead";
+import { submitLead, submitLeadWithUTM } from "@/app/actions/submit-lead";
 import { useState, useEffect } from "react";
 import { revisionTypes } from "@/data/revisionTypes";
 import { useRouter } from "next/navigation";
@@ -24,7 +24,7 @@ const floatingFormSchema = z.object({
 type FormData = z.infer<typeof floatingFormSchema>;
 
 export default function FloatingLeadForm() {
-  const { selectedTypeId, setFormSubmitted } = useLeadStore();
+  const { selectedTypeId, setFormSubmitted, utmParams } = useLeadStore();
   const [errorMessage, setErrorMessage] = useState<string>("");
   const [isVisible, setIsVisible] = useState(true);
   const [isExpanded, setIsExpanded] = useState(false);
@@ -102,12 +102,25 @@ export default function FloatingLeadForm() {
         }
       }
 
-      const result = await submitLead({
-        name: data.name,
-        phone: data.phone,
-        revisionTypeId: revisionTypeId,
-        revisionTypeTitle: revisionTypeTitle,
-      });
+      // Server Action 호출 (UTM 파라미터가 있으면 submitLeadWithUTM 사용)
+      const hasUTM = Object.values(utmParams).some((value) => value !== undefined && value !== "");
+      
+      const result = hasUTM
+        ? await submitLeadWithUTM(
+            {
+              name: data.name,
+              phone: data.phone,
+              revisionTypeId: revisionTypeId,
+              revisionTypeTitle: revisionTypeTitle,
+            },
+            utmParams
+          )
+        : await submitLead({
+            name: data.name,
+            phone: data.phone,
+            revisionTypeId: revisionTypeId,
+            revisionTypeTitle: revisionTypeTitle,
+          });
 
       if (!result.success) {
         setErrorMessage(result.message);
