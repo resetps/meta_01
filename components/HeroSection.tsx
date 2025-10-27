@@ -12,7 +12,7 @@ export default function HeroSection() {
           transition={{ duration: 0.6 }}
           className="text-4xl sm:text-5xl font-bold text-gray-900 mb-6"
         >
-          코 재수술,<br className="sm:hidden" /> 제대로 된 진단부터
+          코 재수술은<br className="sm:hidden" /> 리셋성형외과!
         </motion.h1>
         
         <motion.p

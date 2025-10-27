@@ -49,6 +49,8 @@ const questionButtons = [
   { id: 2, text: "코끝만 재수술 할 수 있나요?" },
   { id: 3, text: "꼭 자가늑연골을 써야 하나요?" },
   { id: 4, text: "재수술은 회복기간이 더 오래걸리나요?" },
+  { id: 5, text: "코 재수술은 언제부터 가능한가요?" },
+  { id: 6, text: "재수술인데 또 같은 문제가 생기진 않을까요?" },
 ];
 
 // 질문별 유튜브 영상 ID 매핑
@@ -57,6 +59,8 @@ const questionVideoIds: Record<number, string> = {
   2: "hu3t42-nRwk", // 코끝만 재수술 할 수 있나요?
   3: "6qVm5NcxVaA", // 꼭 자가늑연골을 써야 하나요?
   4: "Ij5HTQ1CJHM", // 재수술은 회복기간이 더 오래걸리나요?
+  5: "H9Cjm1KQBjM", // 코 재수술은 언제부터 가능한가요?
+  6: "k2bEePrlI1M", // 재수술인데 또 같은 문제가 생기진 않을까요?
 };
 
 export default function RevisionTypeGrid() {
