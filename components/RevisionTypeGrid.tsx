@@ -132,7 +132,7 @@ export default function RevisionTypeGrid() {
       const timer = setTimeout(() => {
         setShowBeforeSelfieTyping(false);
         setShowBeforeSelfieMessage(true);
-      }, 1000);
+      }, 800);
       return () => clearTimeout(timer);
     }
   }, [showSelfiesBefore, selectedType]);
@@ -142,7 +142,7 @@ export default function RevisionTypeGrid() {
     if (showBeforeSelfieMessage && selectedType?.selfieAfter) {
       const timer = setTimeout(() => {
         setShowSelfiesAfter(true);
-      }, 1500);
+      }, 1200);
       return () => clearTimeout(timer);
     }
   }, [showBeforeSelfieMessage, selectedType]);
@@ -154,7 +154,7 @@ export default function RevisionTypeGrid() {
       const timer = setTimeout(() => {
         setShowAfterSelfieTyping(false);
         setShowAfterSelfieMessage(true);
-      }, 1000);
+      }, 800);
       return () => clearTimeout(timer);
     }
   }, [showSelfiesAfter, selectedType]);
@@ -164,17 +164,17 @@ export default function RevisionTypeGrid() {
     if (showAfterSelfieMessage) {
       const timer = setTimeout(() => {
         setShowBeforeAfter(true);
-      }, 1500);
+      }, 1200);
       return () => clearTimeout(timer);
     }
   }, [showAfterSelfieMessage]);
 
-  // 전후사진 표시 후 0.5초 뒤에 질문 표시
+  // 전후사진 표시 후 1초 뒤에 질문 표시
   useEffect(() => {
     if (showBeforeAfter) {
       const timer = setTimeout(() => {
         setShowQuestions(true);
-      }, 500);
+      }, 1000);
       return () => clearTimeout(timer);
     }
   }, [showBeforeAfter]);
