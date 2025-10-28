@@ -9,6 +9,7 @@ import { submitLead, submitLeadWithUTM } from "@/app/actions/submit-lead";
 import { useState, useEffect } from "react";
 import { revisionTypes } from "@/data/revisionTypes";
 import { useRouter } from "next/navigation";
+import PrivacyPolicyContent from "./PrivacyPolicyContent";
 
 // Zod 스키마 정의
 const floatingFormSchema = z.object({
@@ -321,81 +322,7 @@ export default function FloatingLeadForm() {
 
             {/* 내용 (스크롤 가능) */}
             <div className="p-6 overflow-y-auto max-h-[calc(80vh-140px)]">
-              <div className="space-y-6 text-sm text-gray-700">
-                <section>
-                  <h4 className="font-bold text-base text-gray-900 mb-2">1. 개인정보의 수집 및 이용 목적</h4>
-                  <p className="leading-relaxed">
-                    리셋성형외과는 상담 신청 및 예약 관리, 고객 응대 및 상담 서비스 제공을 목적으로 개인정보를 수집합니다.
-                  </p>
-                </section>
-
-                <section>
-                  <h4 className="font-bold text-base text-gray-900 mb-2">2. 수집하는 개인정보의 항목</h4>
-                  <p className="leading-relaxed mb-2">
-                    <span className="font-semibold">필수항목:</span> 이름, 휴대폰번호, 상담 유형
-                  </p>
-                  <p className="leading-relaxed text-gray-600 text-xs">
-                    ※ 서비스 이용 과정에서 IP주소, 접속 로그, 쿠키, 접속 기기정보 등이 자동으로 수집될 수 있습니다.
-                  </p>
-                </section>
-
-                <section>
-                  <h4 className="font-bold text-base text-gray-900 mb-2">3. 개인정보의 보유 및 이용기간</h4>
-                  <p className="leading-relaxed">
-                    상담 완료 후 3개월까지 보관하며, 보유기간 경과 시 지체없이 파기합니다. 단, 관련 법령에 의해 보존할 필요가 있는 경우 해당 법령에서 정한 기간 동안 보관합니다.
-                  </p>
-                </section>
-
-                <section>
-                  <h4 className="font-bold text-base text-gray-900 mb-2">4. 개인정보의 파기절차 및 방법</h4>
-                  <p className="leading-relaxed mb-2">
-                    <span className="font-semibold">파기절차:</span> 보유기간이 경과한 개인정보는 종료일로부터 지체없이 파기합니다.
-                  </p>
-                  <p className="leading-relaxed">
-                    <span className="font-semibold">파기방법:</span> 전자적 파일은 복구 불가능한 방법으로 영구 삭제하며, 종이 문서는 분쇄기로 분쇄하거나 소각합니다.
-                  </p>
-                </section>
-
-                <section>
-                  <h4 className="font-bold text-base text-gray-900 mb-2">5. 개인정보 제공 및 공유</h4>
-                  <p className="leading-relaxed">
-                    회사는 이용자의 개인정보를 원칙적으로 외부에 제공하지 않습니다. 다만, 법령에 의하거나 이용자의 동의가 있는 경우는 예외로 합니다.
-                  </p>
-                </section>
-
-                <section>
-                  <h4 className="font-bold text-base text-gray-900 mb-2">6. 이용자의 권리</h4>
-                  <p className="leading-relaxed">
-                    이용자는 언제든지 본인의 개인정보를 조회하거나 수정, 삭제, 처리정지를 요구할 수 있습니다. 
-                    개인정보 보호 관련 문의사항은 고객센터(02-6246-1113)로 연락주시기 바랍니다.
-                  </p>
-                </section>
-
-                <section>
-                  <h4 className="font-bold text-base text-gray-900 mb-2">7. 개인정보 보호책임자</h4>
-                  <p className="leading-relaxed">
-                    리셋성형외과는 개인정보 처리에 관한 업무를 총괄해서 책임지고, 개인정보 처리와 관련한 정보주체의 불만처리 및 피해구제를 위하여 개인정보 보호책임자를 지정하고 있습니다.
-                  </p>
-                  <div className="mt-2 p-3 bg-gray-50 rounded-lg">
-                    <p className="text-xs">▶ 개인정보 보호책임자</p>
-                    <p className="text-xs">- 연락처: 02-6246-1113</p>
-                    <p className="text-xs">- 이메일: info@resetps.com</p>
-                  </div>
-                </section>
-
-                <section>
-                  <h4 className="font-bold text-base text-gray-900 mb-2">8. 개인정보 처리방침 변경</h4>
-                  <p className="leading-relaxed">
-                    본 개인정보 처리방침은 법령 및 정책 변경에 따라 변경될 수 있으며, 변경 시 웹사이트를 통해 공지합니다.
-                  </p>
-                </section>
-
-                <section className="pt-4 border-t border-gray-200">
-                  <p className="text-xs text-gray-500 text-center">
-                    시행일자: 2024년 1월 1일
-                  </p>
-                </section>
-              </div>
+              <PrivacyPolicyContent />
             </div>
 
             {/* 하단 버튼 */}
