@@ -180,7 +180,7 @@ export default function RevisionTypeGrid() {
   }, [showBeforeAfter]);
 
   return (
-    <section className="py-16 px-4 sm:px-6 lg:px-8 bg-white">
+    <section className="py-8 px-4 sm:px-6 lg:px-8 bg-white">
       <div className="max-w-6xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -823,13 +823,13 @@ export default function RevisionTypeGrid() {
                   }`}
                 >
                   {/* 전후사진 이미지 */}
-                  <div className="aspect-[16/9] relative bg-gray-100">
+                  <div className="aspect-[16/9] relative bg-gray-100 group/image overflow-hidden">
                     {type.beforeAfter ? (
                       <Image
                         src={type.beforeAfter}
                         alt={type.title}
                         fill
-                        className="object-cover"
+                        className="object-cover transition-transform duration-300 group-hover/image:scale-105"
                         sizes="(max-width: 1024px) 100vw, 50vw"
                         unoptimized
                       />
@@ -841,8 +841,32 @@ export default function RevisionTypeGrid() {
                       </div>
                     )}
                     
-                    {/* 그라데이션 오버레이 (가독성 향상) */}
+                    {/* 기본 그라데이션 오버레이 */}
                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent"></div>
+                    
+                    {/* 호버 시 어두운 오버레이 + 텍스트 (PC) */}
+                    <div className="absolute inset-0 bg-black/0 lg:group-hover/image:bg-black/50 transition-all duration-300 flex items-center justify-center">
+                      {/* 모바일: 항상 표시 / PC: 호버 시 표시 */}
+                      <div className="opacity-100 lg:opacity-0 lg:group-hover/image:opacity-100 lg:translate-y-2 lg:group-hover/image:translate-y-0 transition-all duration-300 text-center">
+                        {/* 모바일 버전 - 펄스 애니메이션 + 강한 그림자 */}
+                        <div className="lg:hidden">
+                          <div className="bg-white/95 backdrop-blur-sm px-5 py-2.5 rounded-full shadow-[0_4px_20px_rgba(0,0,0,0.3)] animate-pulse-subtle">
+                            <p className="text-xs font-bold text-gray-900 whitespace-nowrap">
+                              선택하기
+                            </p>
+                          </div>
+                        </div>
+                        {/* PC 버전 - 타원형 버튼 없이 텍스트만 */}
+                        <div className="hidden lg:block">
+                          <p className="text-2xl font-bold text-white mb-1 drop-shadow-lg">
+                            선택하기
+                          </p>
+                          <p className="text-sm text-white/90 drop-shadow-md">
+                            자세한 개선 과정 보기
+                          </p>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                   
                   {/* 카드 하단 정보 */}
@@ -852,11 +876,15 @@ export default function RevisionTypeGrid() {
                     }`}>
                       {type.title}
                     </h3>
-                    <p className={`text-xs sm:text-sm transition-colors ${
-                      selectedTypeId === type.id ? "text-blue-500" : "text-gray-600"
+                    <div className={`flex items-center gap-1.5 text-xs sm:text-sm font-medium transition-colors ${
+                      selectedTypeId === type.id ? "text-blue-600" : "text-blue-500"
                     }`}>
-                      👆 클릭하고 실제 사례를 확인해보세요!
-                    </p>
+                      <svg className="w-4 h-4 animate-bounce" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 13l-3 3m0 0l-3-3m3 3V8m0 13a9 9 0 110-18 9 9 0 010 18z" />
+                      </svg>
+                      <span className="hidden sm:inline">클릭하고 실제 개선 과정을 확인해보세요!</span>
+                      <span className="sm:hidden">개선 과정 확인하기</span>
+                    </div>
                   </div>
 
                   {/* 선택 표시 */}
