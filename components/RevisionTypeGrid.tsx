@@ -362,7 +362,7 @@ export default function RevisionTypeGrid() {
                         </div>
                       )}
                     </div>
-                    전후사진을 보시겠어요?
+                    수술 전후 셀카 보기
                   </button>
                 </motion.div>
               )}
@@ -801,9 +801,11 @@ export default function RevisionTypeGrid() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6"
+              className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6"
             >
-              {displayedTypes.map((type, index) => (
+              {displayedTypes
+                .filter(type => type.beforeAfter) // beforeAfter 이미지가 있는 유형만 표시
+                .map((type, index) => (
                 <motion.button
                   key={type.id}
                   layout
@@ -811,23 +813,24 @@ export default function RevisionTypeGrid() {
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.8 }}
                   transition={{ duration: 0.3 }}
-                  whileHover={{ scale: 1.03 }}
+                  whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   onClick={() => handleTypeSelect(type.id)}
-                  className={`relative overflow-hidden rounded-xl sm:rounded-2xl border sm:border-2 transition-all duration-300 ${
+                  className={`relative overflow-hidden rounded-xl sm:rounded-2xl border sm:border-2 transition-all duration-300 bg-white ${
                     selectedTypeId === type.id
                       ? "border-blue-600 shadow-xl shadow-blue-100"
-                      : "border-gray-200 hover:border-blue-300 hover:shadow-lg"
+                      : "border-gray-200 hover:border-blue-400 hover:shadow-lg"
                   }`}
                 >
-                  <div className="aspect-[4/3] relative bg-gray-100">
-                    {type.thumb ? (
+                  {/* 전후사진 이미지 */}
+                  <div className="aspect-[16/9] relative bg-gray-100">
+                    {type.beforeAfter ? (
                       <Image
-                        src={type.thumb}
+                        src={type.beforeAfter}
                         alt={type.title}
                         fill
                         className="object-cover"
-                        sizes="(max-width: 1024px) 50vw, 33vw"
+                        sizes="(max-width: 1024px) 100vw, 50vw"
                         unoptimized
                       />
                     ) : (
@@ -837,16 +840,26 @@ export default function RevisionTypeGrid() {
                         </svg>
                       </div>
                     )}
+                    
+                    {/* 그라데이션 오버레이 (가독성 향상) */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent"></div>
                   </div>
                   
-                  <div className="p-2 sm:p-4 bg-white">
-                    <h3 className={`text-xs sm:text-base font-semibold text-left transition-colors ${
+                  {/* 카드 하단 정보 */}
+                  <div className="p-4 sm:p-5 bg-white">
+                    <h3 className={`text-sm sm:text-lg font-bold mb-2 transition-colors ${
                       selectedTypeId === type.id ? "text-blue-600" : "text-gray-900"
                     }`}>
                       {type.title}
                     </h3>
+                    <p className={`text-xs sm:text-sm transition-colors ${
+                      selectedTypeId === type.id ? "text-blue-500" : "text-gray-600"
+                    }`}>
+                      👆 클릭하고 실제 사례를 확인해보세요!
+                    </p>
                   </div>
 
+                  {/* 선택 표시 */}
                   {selectedTypeId === type.id && (
                     <motion.div
                       initial={{ opacity: 0 }}
