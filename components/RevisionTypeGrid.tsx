@@ -870,13 +870,13 @@ export default function RevisionTypeGrid() {
                   </div>
                   
                   {/* 카드 하단 정보 */}
-                  <div className="p-4 sm:p-5 bg-white">
+                  <div className="p-4 sm:p-5 bg-white text-center">
                     <h3 className={`text-sm sm:text-lg font-bold mb-2 transition-colors ${
                       selectedTypeId === type.id ? "text-blue-600" : "text-gray-900"
                     }`}>
                       {type.title}
                     </h3>
-                    <div className={`flex items-center gap-1.5 text-xs sm:text-sm font-medium transition-colors ${
+                    <div className={`flex items-center justify-center gap-1.5 text-xs sm:text-sm font-medium transition-colors ${
                       selectedTypeId === type.id ? "text-blue-600" : "text-blue-500"
                     }`}>
                       <svg className="w-4 h-4 animate-bounce" fill="none" viewBox="0 0 24 24" stroke="currentColor">
