@@ -5,7 +5,7 @@ import Image from "next/image";
 
 export default function HeroSection() {
   const profileImageUrl = process.env.NEXT_PUBLIC_SUPABASE_URL 
-    ? `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/landing-images/top1.png`
+    ? `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/landing-images/top1.gif`
     : "";
 
   return (

@@ -5,6 +5,7 @@ import DoctorProfileSection from "@/components/DoctorProfileSection";
 import ReviewCardsSection from "@/components/ReviewCardsSection";
 import LeadForm from "@/components/LeadForm";
 import FloatingLeadForm from "@/components/FloatingLeadForm";
+import ScrollPopupModal from "@/components/ScrollPopupModal";
 import UTMTracker from "@/components/UTMTracker";
 
 export default function Home() {
@@ -32,6 +33,9 @@ export default function Home() {
 
       {/* 플로팅 상담 신청 폼 */}
       <FloatingLeadForm />
+
+      {/* 스크롤 팝업 모달 */}
+      <ScrollPopupModal />
 
       {/* Footer */}
       <footer className="bg-gray-900 text-white py-12 px-4 sm:px-6 lg:px-8">
