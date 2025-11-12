@@ -63,6 +63,7 @@ export default function DoctorProfileSection() {
                         fill
                         className="object-cover"
                         sizes="(max-width: 768px) 300px, 350px"
+                        unoptimized
                       />
                     </div>
                     
