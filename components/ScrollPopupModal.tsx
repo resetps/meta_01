@@ -184,7 +184,7 @@ export default function ScrollPopupModal() {
                     fill
                     className="object-cover"
                     priority
-                    sizes="(max-width: 640px) 90vw, (max-width: 1024px) 600px, 700px"
+                    unoptimized
                   />
                 )}
                 

@@ -253,4 +253,3 @@ Supabase Dashboard에서:
 
 
 
-

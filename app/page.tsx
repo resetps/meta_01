@@ -1,58 +1,12 @@
 import { Suspense } from "react";
-import dynamic from "next/dynamic";
 import HeroSection from "@/components/HeroSection";
 import RevisionTypeGrid from "@/components/RevisionTypeGrid";
+import DoctorProfileSection from "@/components/DoctorProfileSection";
+import ReviewCardsSection from "@/components/ReviewCardsSection";
+import LeadForm from "@/components/LeadForm";
+import FloatingLeadForm from "@/components/FloatingLeadForm";
+import ScrollPopupModal from "@/components/ScrollPopupModal";
 import UTMTracker from "@/components/UTMTracker";
-
-// 첫 화면에 보이지 않는 컴포넌트들은 Dynamic Import로 지연 로딩
-// loading 컴포넌트로 스켈레톤 UI를 제공하여 체감 속도 개선
-const DoctorProfileSection = dynamic(
-  () => import("@/components/DoctorProfileSection"),
-  {
-    loading: () => (
-      <div className="bg-white py-16 sm:py-20 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-6xl mx-auto">
-          <div className="h-64 bg-gray-100 rounded-3xl animate-pulse" />
-        </div>
-      </div>
-    ),
-  }
-);
-
-const ReviewCardsSection = dynamic(
-  () => import("@/components/ReviewCardsSection"),
-  {
-    loading: () => (
-      <div className="bg-gradient-to-b from-blue-50 to-white py-16 sm:py-20 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-6xl mx-auto">
-          <div className="h-96 bg-gray-100 rounded-3xl animate-pulse" />
-        </div>
-      </div>
-    ),
-  }
-);
-
-const LeadForm = dynamic(() => import("@/components/LeadForm"), {
-  loading: () => (
-    <div className="py-8 px-4">
-      <div className="max-w-2xl mx-auto h-96 bg-gray-100 rounded-2xl animate-pulse" />
-    </div>
-  ),
-});
-
-const FloatingLeadForm = dynamic(
-  () => import("@/components/FloatingLeadForm"),
-  {
-    ssr: false, // 플로팅 버튼은 클라이언트에서만 렌더링
-  }
-);
-
-const ScrollPopupModal = dynamic(
-  () => import("@/components/ScrollPopupModal"),
-  {
-    ssr: false, // 팝업 모달은 클라이언트에서만 렌더링
-  }
-);
 
 export default function Home() {
   return (

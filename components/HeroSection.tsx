@@ -74,7 +74,7 @@ export default function HeroSection() {
                   fill
                   className="object-contain"
                   priority
-                  sizes="(max-width: 768px) 90vw, (max-width: 1280px) 450px, 500px"
+                  unoptimized
                 />
               )}
               
