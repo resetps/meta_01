@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import { revisionTypes } from "@/data/revisionTypes";
 import { useLeadStore } from "@/store/useLeadStore";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 // 유형별 사용자 메시지
 const userMessages: Record<number, string> = {
@@ -78,6 +78,9 @@ export default function RevisionTypeGrid() {
   const [showAfterSelfieTyping, setShowAfterSelfieTyping] = useState(false);
   const [showAfterSelfieMessage, setShowAfterSelfieMessage] = useState(false);
 
+  // 채팅 UI 컨테이너 ref (스크롤 이동용)
+  const chatContainerRef = useRef<HTMLDivElement>(null);
+
   // 선택된 유형 (useEffect들보다 먼저 정의)
   const selectedType = revisionTypes.find(type => type.id === selectedTypeId);
 
@@ -86,10 +89,21 @@ export default function RevisionTypeGrid() {
     ? revisionTypes 
     : revisionTypes.filter(type => type.id === selectedTypeId);
 
-  // 유형 선택 시 showAll을 false로 변경
+  // 유형 선택 시 showAll을 false로 변경하고 채팅 UI로 스크롤
   const handleTypeSelect = (id: number) => {
     setSelectedTypeId(id);
     setShowAll(false);
+    
+    // DOM 업데이트 후 채팅 UI로 스크롤 이동
+    // 약간의 딜레이를 줘서 상태 변경 후 렌더링이 완료된 시점에 스크롤
+    setTimeout(() => {
+      if (chatContainerRef.current) {
+        chatContainerRef.current.scrollIntoView({
+          behavior: 'smooth',
+          block: 'start',
+        });
+      }
+    }, 100);
   };
 
   // 다시 전체 보기
@@ -208,6 +222,7 @@ export default function RevisionTypeGrid() {
         {/* 채팅창 UI (선택된 유형이 있고 showAll이 false일 때) */}
         {!showAll && selectedType && (
           <motion.div
+            ref={chatContainerRef}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             className="mb-12 max-w-2xl mx-auto"
@@ -255,7 +270,7 @@ export default function RevisionTypeGrid() {
                         alt="프로필"
                         fill
                         className="object-cover"
-                        unoptimized
+                        sizes="48px"
                       />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center bg-blue-100">
@@ -284,7 +299,7 @@ export default function RevisionTypeGrid() {
                         alt="원장님"
                         fill
                         className="object-cover"
-                        unoptimized
+                        sizes="48px"
                       />
                     ) : (
                       <span>원</span>
@@ -354,7 +369,7 @@ export default function RevisionTypeGrid() {
                           alt="프로필"
                           fill
                           className="object-cover"
-                          unoptimized
+                          sizes="48px"
                         />
                       ) : (
                         <div className="w-full h-full bg-white flex items-center justify-center text-purple-600 text-2xl">
@@ -385,7 +400,7 @@ export default function RevisionTypeGrid() {
                             alt="셀카 당사자"
                             fill
                             className="object-cover"
-                            unoptimized
+                            sizes="48px"
                           />
                         ) : (
                           <span>💁</span>
@@ -441,7 +456,7 @@ export default function RevisionTypeGrid() {
                             alt="셀카 당사자"
                             fill
                             className="object-cover"
-                            unoptimized
+                            sizes="48px"
                           />
                         ) : (
                           <span>💁</span>
@@ -505,7 +520,7 @@ export default function RevisionTypeGrid() {
                             alt="셀카 당사자"
                             fill
                             className="object-cover"
-                            unoptimized
+                            sizes="48px"
                           />
                         ) : (
                           <span>💁</span>
@@ -561,7 +576,7 @@ export default function RevisionTypeGrid() {
                             alt="셀카 당사자"
                             fill
                             className="object-cover"
-                            unoptimized
+                            sizes="48px"
                           />
                         ) : (
                           <span>💁</span>
@@ -677,7 +692,7 @@ export default function RevisionTypeGrid() {
                             alt="프로필"
                             fill
                             className="object-cover"
-                            unoptimized
+                            sizes="48px"
                           />
                         ) : (
                           <div className="w-full h-full flex items-center justify-center bg-blue-100">
@@ -713,7 +728,7 @@ export default function RevisionTypeGrid() {
                               alt="원장님"
                               fill
                               className="object-cover"
-                              unoptimized
+                              sizes="48px"
                             />
                           ) : (
                             <span>원</span>
@@ -831,7 +846,7 @@ export default function RevisionTypeGrid() {
                         fill
                         className="object-cover transition-transform duration-300 group-hover/image:scale-105"
                         sizes="(max-width: 1024px) 100vw, 50vw"
-                        unoptimized
+                        loading="lazy"
                       />
                     ) : (
                       <div className="absolute inset-0 flex items-center justify-center text-gray-400">
