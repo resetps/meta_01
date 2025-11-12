@@ -3,6 +3,7 @@
 import { motion, useMotionValue, useTransform, animate } from "framer-motion";
 import { getLandingImageUrl } from "@/lib/supabase/storage";
 import Image from "next/image";
+import LazyImage from "@/components/LazyImage";
 import { useRef, useEffect, useState } from "react";
 
 /**
@@ -349,7 +350,7 @@ export default function ReviewCardsSection() {
                   isHovered ? 'shadow-blue-500/50' : ''
                 }`}>
                   <div className="relative w-[240px] h-[170px] sm:w-[320px] sm:h-[220px] lg:w-[380px] lg:h-[260px] overflow-hidden rounded-xl">
-                    <Image
+                    <LazyImage
                       src={getLandingImageUrl(fileName)}
                       alt={`환자 후기 ${index + 1}`}
                       fill

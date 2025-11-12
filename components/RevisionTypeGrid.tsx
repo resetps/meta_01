@@ -2,6 +2,7 @@
 
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
+import LazyImage from "@/components/LazyImage";
 import { revisionTypes } from "@/data/revisionTypes";
 import { useLeadStore } from "@/store/useLeadStore";
 import { useState, useEffect, useRef } from "react";
@@ -839,7 +840,7 @@ export default function RevisionTypeGrid() {
                   {/* 전후사진 이미지 */}
                   <div className="aspect-[16/9] relative bg-gray-100 group/image overflow-hidden">
                     {type.beforeAfter ? (
-                      <Image
+                      <LazyImage
                         src={type.beforeAfter}
                         alt={type.title}
                         fill

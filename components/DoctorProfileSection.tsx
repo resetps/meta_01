@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import { getLandingImageUrl } from "@/lib/supabase/storage";
 import Image from "next/image";
+import LazyImage from "@/components/LazyImage";
 
 /**
  * DoctorProfileSection 컴포넌트
@@ -57,7 +58,7 @@ export default function DoctorProfileSection() {
                   {/* 이미지 카드 */}
                   <div className="relative bg-white rounded-2xl shadow-xl p-3 sm:p-4">
                     <div className="relative aspect-[3/4] overflow-hidden rounded-xl">
-                      <Image
+                      <LazyImage
                         src={getLandingImageUrl("doctor.jpg")}
                         alt="리셋성형외과 원장님"
                         fill
