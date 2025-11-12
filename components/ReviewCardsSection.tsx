@@ -355,6 +355,7 @@ export default function ReviewCardsSection() {
                       fill
                       className="object-contain bg-white"
                       sizes="(max-width: 640px) 240px, (max-width: 1024px) 320px, 380px"
+                      loading="lazy"
                     />
                   </div>
                   

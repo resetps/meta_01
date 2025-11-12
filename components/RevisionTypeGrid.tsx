@@ -271,6 +271,7 @@ export default function RevisionTypeGrid() {
                         fill
                         className="object-cover"
                         sizes="48px"
+                        loading="lazy"
                       />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center bg-blue-100">
@@ -300,6 +301,7 @@ export default function RevisionTypeGrid() {
                         fill
                         className="object-cover"
                         sizes="48px"
+                        loading="lazy"
                       />
                     ) : (
                       <span>원</span>
@@ -370,6 +372,7 @@ export default function RevisionTypeGrid() {
                           fill
                           className="object-cover"
                           sizes="48px"
+                          loading="lazy"
                         />
                       ) : (
                         <div className="w-full h-full bg-white flex items-center justify-center text-purple-600 text-2xl">
@@ -401,6 +404,7 @@ export default function RevisionTypeGrid() {
                             fill
                             className="object-cover"
                             sizes="48px"
+                            loading="lazy"
                           />
                         ) : (
                           <span>💁</span>
@@ -457,6 +461,7 @@ export default function RevisionTypeGrid() {
                             fill
                             className="object-cover"
                             sizes="48px"
+                            loading="lazy"
                           />
                         ) : (
                           <span>💁</span>
@@ -521,6 +526,7 @@ export default function RevisionTypeGrid() {
                             fill
                             className="object-cover"
                             sizes="48px"
+                            loading="lazy"
                           />
                         ) : (
                           <span>💁</span>
@@ -577,6 +583,7 @@ export default function RevisionTypeGrid() {
                             fill
                             className="object-cover"
                             sizes="48px"
+                            loading="lazy"
                           />
                         ) : (
                           <span>💁</span>
