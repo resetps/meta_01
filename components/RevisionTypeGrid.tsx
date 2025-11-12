@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import { revisionTypes } from "@/data/revisionTypes";
 import { useLeadStore } from "@/store/useLeadStore";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 // 유형별 사용자 메시지
 const userMessages: Record<number, string> = {
@@ -78,6 +78,9 @@ export default function RevisionTypeGrid() {
   const [showAfterSelfieTyping, setShowAfterSelfieTyping] = useState(false);
   const [showAfterSelfieMessage, setShowAfterSelfieMessage] = useState(false);
 
+  // 채팅 UI 컨테이너 ref (스크롤 이동용)
+  const chatContainerRef = useRef<HTMLDivElement>(null);
+
   // 선택된 유형 (useEffect들보다 먼저 정의)
   const selectedType = revisionTypes.find(type => type.id === selectedTypeId);
 
@@ -86,10 +89,20 @@ export default function RevisionTypeGrid() {
     ? revisionTypes 
     : revisionTypes.filter(type => type.id === selectedTypeId);
 
-  // 유형 선택 시 showAll을 false로 변경
+  // 유형 선택 시 showAll을 false로 변경하고 채팅 UI로 스크롤
   const handleTypeSelect = (id: number) => {
     setSelectedTypeId(id);
     setShowAll(false);
+    
+    // DOM 업데이트 후 채팅 UI로 스크롤 이동
+    setTimeout(() => {
+      if (chatContainerRef.current) {
+        chatContainerRef.current.scrollIntoView({
+          behavior: 'smooth',
+          block: 'start',
+        });
+      }
+    }, 100);
   };
 
   // 다시 전체 보기
@@ -208,6 +221,7 @@ export default function RevisionTypeGrid() {
         {/* 채팅창 UI (선택된 유형이 있고 showAll이 false일 때) */}
         {!showAll && selectedType && (
           <motion.div
+            ref={chatContainerRef}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             className="mb-12 max-w-2xl mx-auto"
