@@ -8,6 +8,9 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        "nanum-pen": ["'Nanum Pen Script'", "cursive"],
+      },
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",

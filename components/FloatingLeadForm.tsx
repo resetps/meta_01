@@ -25,7 +25,7 @@ const floatingFormSchema = z.object({
 type FormData = z.infer<typeof floatingFormSchema>;
 
 export default function FloatingLeadForm() {
-  const { selectedTypeId, setFormSubmitted, utmParams } = useLeadStore();
+  const { selectedTypeId, setFormSubmitted, utmParams, setSubmittedName } = useLeadStore();
   const [errorMessage, setErrorMessage] = useState<string>("");
   const [isVisible, setIsVisible] = useState(true);
   const [isExpanded, setIsExpanded] = useState(false);
@@ -130,6 +130,7 @@ export default function FloatingLeadForm() {
 
       // 성공 처리 - /thankyou 페이지로 리다이렉트
       setFormSubmitted(true);
+      setSubmittedName(data.name); // 이름 저장
       reset();
       router.push('/thankyou');
     } catch (error) {

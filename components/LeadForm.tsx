@@ -25,7 +25,7 @@ const leadFormSchema = z.object({
 type FormData = z.infer<typeof leadFormSchema>;
 
 export default function LeadForm() {
-  const { selectedTypeId, setFormSubmitted, isFormSubmitted, utmParams } = useLeadStore();
+  const { selectedTypeId, setFormSubmitted, isFormSubmitted, utmParams, setSubmittedName } = useLeadStore();
   const [errorMessage, setErrorMessage] = useState<string>("");
   const [showPrivacyModal, setShowPrivacyModal] = useState(false);
   const router = useRouter();
@@ -99,6 +99,7 @@ export default function LeadForm() {
 
       // 성공 처리 - /thankyou 페이지로 리다이렉트
       setFormSubmitted(true);
+      setSubmittedName(data.name); // 이름 저장
       reset();
       router.push('/thankyou');
     } catch (error) {
