@@ -120,6 +120,7 @@ export default function ThankYouPage() {
     };
 
     preloadImages();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // 자동 슬라이드 효과 (이미지 로드 완료 후 시작)
@@ -151,7 +152,7 @@ export default function ThankYouPage() {
       y: 0,
       transition: {
         duration: 0.5,
-        ease: "easeOut",
+        ease: "easeOut" as const,
       },
     },
   };
@@ -163,7 +164,7 @@ export default function ThankYouPage() {
       scale: 1,
       transition: {
         duration: 0.4,
-        ease: "easeOut",
+        ease: "easeOut" as const,
       },
     },
   };
@@ -175,7 +176,7 @@ export default function ThankYouPage() {
       x: 0,
       transition: {
         duration: 0.5,
-        ease: "easeOut",
+        ease: "easeOut" as const,
       },
     },
   };
@@ -187,7 +188,7 @@ export default function ThankYouPage() {
       y: 0,
       transition: {
         duration: 0.5,
-        ease: "easeOut",
+        ease: "easeOut" as const,
       },
     },
   };
@@ -311,7 +312,7 @@ export default function ThankYouPage() {
                 boxShadow: {
                   duration: 2,
                   repeat: Infinity,
-                  ease: "easeInOut",
+                  ease: "easeInOut" as const,
                 },
               }}
             >
@@ -356,7 +357,7 @@ export default function ThankYouPage() {
                   </div>
                   <div className="flex-1">
                     <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-2">
-                      3D-CT로 '내 코 상태의 기준'을 먼저 잡을 수 있습니다.
+                      3D-CT로 &apos;내 코 상태의 기준&apos;을 먼저 잡을 수 있습니다.
                     </h3>
                     <p className="text-gray-600 text-sm sm:text-base leading-relaxed mb-3">
                       CT로 연골·비중격·재료 상태를 정확히 확인하면 다른 병원 상담에서도 흔들리지 않는 기준점을 만들 수 있습니다.
@@ -466,7 +467,7 @@ export default function ThankYouPage() {
                     initial={{ opacity: 0, x: 100 }}
                     animate={{ opacity: 1, x: 0 }}
                     exit={{ opacity: 0, x: -100 }}
-                    transition={{ duration: 0.5, ease: "easeInOut" }}
+                    transition={{ duration: 0.5, ease: "easeInOut" as const }}
                     className="absolute inset-0 flex items-center justify-center"
                   >
                     <div className="bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100 w-full max-w-md">
