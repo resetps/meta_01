@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import Script from "next/script";
+import Navigation from "@/components/Navigation";
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -105,6 +106,9 @@ export default function RootLayout({
             `,
           }}
         />
+
+        {/* 네비게이션 바 */}
+        <Navigation />
 
         {children}
       </body>
