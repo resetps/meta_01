@@ -207,7 +207,7 @@ export default function ScrollPopupModal() {
                     무료 상담 신청하기
                   </h4>
                   <p className="text-sm text-gray-600">
-                    '수술재료'나 '수술방법'에 따라 금액이 달라질수 있습니다
+                    &apos;수술재료&apos;나 &apos;수술방법&apos;에 따라 금액이 달라질수 있습니다
                   </p>
                 </div>
 

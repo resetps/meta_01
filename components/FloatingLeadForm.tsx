@@ -205,7 +205,7 @@ export default function FloatingLeadForm() {
                   {/* 타이틀 */}
                   <div className="text-center mb-2">
                     <p className="text-2xl sm:text-3xl font-bold text-white">코 재수술은 리셋성형외과!</p>
-                    <p className="text-xs sm:text-sm text-white/80 mt-1">'수술재료'나 '수술방법'에 따라 금액이 달라질수 있습니다</p>
+                    <p className="text-xs sm:text-sm text-white/80 mt-1">&apos;수술재료&apos;나 &apos;수술방법&apos;에 따라 금액이 달라질수 있습니다</p>
                   </div>
 
                   {/* 첫 번째 행: 입력 필드와 버튼 */}
