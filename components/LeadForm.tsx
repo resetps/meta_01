@@ -263,7 +263,7 @@ export default function LeadForm() {
 
             {/* 안내 문구 */}
             <p className="mt-4 text-xs text-center text-gray-500">
-              신청 후 24시간 이내에 연락드리겠습니다
+            '수술 재료'나 '수술방법'에 따라서 금액이 달라질수 있습니다
             </p>
           </form>
 
