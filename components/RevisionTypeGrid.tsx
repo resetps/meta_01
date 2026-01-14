@@ -204,7 +204,7 @@ export default function RevisionTypeGrid() {
           className="text-center mb-12"
         >
           <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
-            다음 중 어떤 재수술 유형에<br className="sm:hidden" /> 해당되시나요?
+            다음 중 어떤 유형에<br className="sm:hidden" /> 해당되시나요?
           </h2>
           <motion.p
             animate={{ y: [0, -5, 0] }}

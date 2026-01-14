@@ -172,7 +172,7 @@ export default function FloatingLeadForm() {
                 whileTap={{ scale: 0.95 }}
                 className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-4 rounded-full font-bold text-base sm:text-lg transition-all flex items-center gap-3"
               >
-                코 재수술 상담 신청하기
+                무료 상담 신청하기
                 <svg 
                   className="w-6 h-6 sm:w-7 sm:h-7" 
                   fill="currentColor" 
